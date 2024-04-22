@@ -1,0 +1,23 @@
+@import "../global/responsive.scss";
+
+.homePage {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+
+  .textContainer {
+    flex: 3;
+
+    .wrapper {
+      padding-right: 100px;
+
+      @include xl {
+        padding-right: 0;
+      }
+    }
+  }
+
+  .imgContainer {
+    flex: 2;
+  }
+}
