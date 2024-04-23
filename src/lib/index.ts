@@ -1,3 +1,3 @@
-export type { Estate, EstateRaw } from './definations';
+export type { Estate, EstateRaw } from "./definations";
 
-export { listData } from './dummyData';
+export { listData } from "./dummyData";

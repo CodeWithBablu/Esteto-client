@@ -17,7 +17,7 @@ export default function Searchbar() {
 
   return (
     <div className="searchbar">
-      <div className="type mb-2 flex w-fit gap-2 shadow-md bg-gray-100 rounded-2xl p-2">
+      <div className="type mb-2 flex w-fit gap-2 rounded-2xl bg-gray-100 p-2 shadow-md">
         {types.map((type) => (
           <button
             key={type}
@@ -31,10 +31,10 @@ export default function Searchbar() {
 
       <form
         action="POST"
-        className=" flex flex-col overflow-hidden md:flex-row h-auto lg:h-16 justify-between gap-3 rounded-md md:border border-zinc-500"
+        className=" flex h-auto flex-col justify-between gap-3 overflow-hidden rounded-md border-zinc-500 md:flex-row md:border lg:h-16"
       >
         <input
-          className=" bg-transparent focus:border-blue-600 border rounded-md md:border-none outline-none px-3 py-3 w-full md:w-[200px]"
+          className=" w-full rounded-md border bg-transparent px-3 py-3 outline-none focus:border-blue-600 md:w-[200px] md:border-none"
           type="text"
           name="location"
           id="location"
@@ -42,7 +42,7 @@ export default function Searchbar() {
         />
 
         <input
-          className=" bg-transparent focus:border-blue-600 border rounded-md md:border-none outline-none px-3 py-3 w-full md:w-[140px] xl:w-[180px]"
+          className=" w-full rounded-md border bg-transparent px-3 py-3 outline-none focus:border-blue-600 md:w-[140px] md:border-none xl:w-[180px]"
           type="number"
           name="minPrice"
           id="minPrice"
@@ -52,7 +52,7 @@ export default function Searchbar() {
         />
 
         <input
-          className=" bg-transparent focus:border-blue-600 border rounded-md md:border-none outline-none px-3 py-3 w-full md:w-[140px] xl:w-[180px]"
+          className=" w-full rounded-md border bg-transparent px-3 py-3 outline-none focus:border-blue-600 md:w-[140px] md:border-none xl:w-[180px]"
           type="number"
           name="maxPrice"
           id="maxPrice"
@@ -61,8 +61,8 @@ export default function Searchbar() {
           placeholder="Max Price"
         />
 
-        <button className="flex items-center gap-5 md:gap-0 text-xl text-gray-100 justify-center border-none cursor-pointer h-14 w-full md:w-16 md:h-16 bg-blue-600 rounded-md">
-          <MagnifyingGlassIcon className="w-6 h-6" />
+        <button className="flex h-14 w-full cursor-pointer items-center justify-center gap-5 rounded-md border-none bg-blue-600 text-xl text-gray-100 md:h-16 md:w-16 md:gap-0">
+          <MagnifyingGlassIcon className="h-6 w-6" />
           <span className="inline-block md:hidden">Search</span>
         </button>
       </form>

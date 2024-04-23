@@ -12,7 +12,6 @@ export default function Navbar() {
 
   const [isChatOpen, setIsChatOpen] = useState(true);
 
-
   return (
     <nav className=" z-30 w-full font-chillax">
       <div className="left">
@@ -32,12 +31,12 @@ export default function Navbar() {
             className=" relative flex w-fit shrink-0 items-center md:w-12 lg:w-fit "
           >
             <img
-              className="h-10 w-10 lg:h-12 lg:w-12 -rotate-90 rounded-full"
+              className="h-10 w-10 -rotate-90 rounded-full lg:h-12 lg:w-12"
               src={"/mountain.png"}
               alt="logo"
             />
 
-            <span className="z-10 ml-2 text-4xl bg-gradient-to-r from-indigo-500 to-teal-500 bg-clip-text font-chillax font-semibold text-transparent">
+            <span className="z-10 ml-2 bg-gradient-to-r from-indigo-500 to-teal-500 bg-clip-text font-chillax text-4xl font-semibold text-transparent">
               Esteto
             </span>
           </a>
@@ -51,17 +50,27 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className={clsx(
-        `right bg-gray-200 text-[20px] font-medium`,
-        { 'bg-transparent': location.pathname === '/profile' }
-      )}>
+      <div
+        className={clsx(`right bg-gray-200 text-[20px] font-medium`, {
+          "bg-transparent": location.pathname === "/profile",
+        })}
+      >
         {user ? (
           <>
-            <UserCircleIcon className=" w-8 h-8 md:w-10 md:h-10 mx-2 md:mx-4 text-zinc-600" />
-            <span className=" hidden lg:inline-block font-medium mx-4 text-zinc-600">John Doe</span>
+            <UserCircleIcon className=" mx-2 h-8 w-8 text-zinc-600 md:mx-4 md:h-10 md:w-10" />
+            <span className=" mx-4 hidden font-medium text-zinc-600 lg:inline-block">
+              John Doe
+            </span>
             <div className="relative cursor-pointer">
-              <img onClick={() => setIsChatOpen((prev) => !prev)} src="/assets/icons/message3.png" alt="message" className="relative w-8 h-8 md:w-10 md:h-10 mx-2 md:mx-4" />
-              <div className="absolute right-0 top-0 -translate-x-1/2 -translate-y-1/3 w-6 h-6 rounded-full flex justify-center text-sm items-center text-gray-100 font-medium bg-rose-600">3</div>
+              <img
+                onClick={() => setIsChatOpen((prev) => !prev)}
+                src="/assets/icons/message3.png"
+                alt="message"
+                className="relative mx-2 h-8 w-8 md:mx-4 md:h-10 md:w-10"
+              />
+              <div className="absolute right-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/3 items-center justify-center rounded-full bg-rose-600 text-sm font-medium text-gray-100">
+                3
+              </div>
             </div>
           </>
         ) : (
@@ -69,19 +78,19 @@ export default function Navbar() {
             <a href="/" className="mx-4 text-zinc-800">
               Sign in
             </a>
-            <a href="/" className="mx-4 bg-blue-500 text-gray-50 px-6 py-3">
+            <a href="/" className="mx-4 bg-blue-500 px-6 py-3 text-gray-50">
               Sign up
             </a>
-          </>)
-        }
+          </>
+        )}
 
         <Bars3Icon
           onClick={() => setOpen((prev) => !prev)}
-          className="z-30 inline text-zinc-800 w-8 lg:w-10 cursor-pointer lg:hidden"
+          className="z-30 inline w-8 cursor-pointer text-zinc-800 lg:hidden lg:w-10"
         />
 
         <div
-          className={`flex flex-col items-center justify-center text-zinc-800 gap-5 z-10 text-2xl font-semibold ${open ? "menu active" : "menu"}`}
+          className={`z-10 flex flex-col items-center justify-center gap-5 text-2xl font-semibold text-zinc-800 ${open ? "menu active" : "menu"}`}
         >
           <a href="/">Home</a>
           <a href="/">About</a>
@@ -90,10 +99,9 @@ export default function Navbar() {
           <a href="/">Sign in</a>
           <a href="/">Sign up</a>
         </div>
-      </div >
+      </div>
 
       <Chat isOpen={isChatOpen} />
-
-    </nav >
+    </nav>
   );
 }

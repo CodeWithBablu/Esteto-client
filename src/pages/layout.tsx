@@ -1,4 +1,4 @@
-import '../styles/global/layout.scss';
+import "../styles/global/layout.scss";
 
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../components";

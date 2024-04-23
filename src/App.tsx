@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { HomePage, Layout, ListPage, ProfilePage, SinglePage } from "./pages";
 
@@ -26,14 +23,12 @@ const router = createBrowserRouter([
         path: "/profile",
         element: <ProfilePage />,
       },
-    ]
+    ],
   },
 ]);
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
