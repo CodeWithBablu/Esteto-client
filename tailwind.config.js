@@ -44,13 +44,24 @@ export default {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         caveat: ["Caveat", "cursive"],
-        audiowide: ["Audiowide", "sans-serif"],
+        chillax: ["Chillax", "sans-serif"],
       },
 
       animation: {
         blob: "bolb 7s infinite",
+        fadeIn: "fadeIn 1s ease-in",
       },
       keyframes: {
+        fadeIn: {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(50%)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0%)",
+          },
+        },
         bolb: {
           "0%": {
             transform: "scale(1) translate(0px,0px)",

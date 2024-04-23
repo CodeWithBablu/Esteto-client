@@ -5,13 +5,13 @@ import { Estate } from '../../lib';
 
 export default function Card({ item }: { item: Estate }) {
   return (
-    <div className='card'>
+    <div className='card flex flex-col md:flex-row'>
 
-      <Link to={`/${item.id}`} className='imgContainer'>
+      <Link to={`/${item.id}`} className='imgContainer h-[250px]'>
         <img src={item.img} alt={item.title} />
       </Link>
 
-      <div className="textContainer">
+      <div className="textContainer flex flex-col gap-3 md:justify-between">
         <h2 className='title'>
           <Link to={`/${item.id}`}>{item.title}</Link>
         </h2>
@@ -23,7 +23,7 @@ export default function Card({ item }: { item: Estate }) {
 
         <p className='price'>$ {item.price}</p>
 
-        <div className="bottom">
+        <div className="bottom flex flex-col lg:flex-row items-start gap-5 lg:items-center lg:justify-between">
           <div className="features">
             <div className="feature">
               <img src="/assets/icons/bed.png" alt="bed" />

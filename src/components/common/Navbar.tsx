@@ -1,12 +1,20 @@
 import { useState } from "react";
 import "../../styles/ui/navbar.scss";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { useLocation } from "react-router-dom";
+import clsx from "clsx";
+import Chat from "../Profile/Chat";
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
   const user = true;
 
+  const [isChatOpen, setIsChatOpen] = useState(true);
+
+
   return (
-    <nav className=" z-30 w-full font-poppins">
+    <nav className=" z-30 w-full font-chillax">
       <div className="left">
         <div className="relative">
           <div
@@ -29,7 +37,7 @@ export default function Navbar() {
               alt="logo"
             />
 
-            <span className="z-10 ml-2 text-3xl bg-gradient-to-r from-indigo-500 to-teal-500 bg-clip-text font-audiowide font-medium text-transparent">
+            <span className="z-10 ml-2 text-4xl bg-gradient-to-r from-indigo-500 to-teal-500 bg-clip-text font-chillax font-semibold text-transparent">
               Esteto
             </span>
           </a>
@@ -43,13 +51,16 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="right bg-gray-200 text-[20px] font-medium">
+      <div className={clsx(
+        `right bg-gray-200 text-[20px] font-medium`,
+        { 'bg-transparent': location.pathname === '/profile' }
+      )}>
         {user ? (
           <>
             <UserCircleIcon className=" w-8 h-8 md:w-10 md:h-10 mx-2 md:mx-4 text-zinc-600" />
             <span className=" hidden lg:inline-block font-medium mx-4 text-zinc-600">John Doe</span>
             <div className="relative cursor-pointer">
-              <img src="/assets/icons/message3.png" alt="message" className="relative w-8 h-8 md:w-10 md:h-10 mx-2 md:mx-4" />
+              <img onClick={() => setIsChatOpen((prev) => !prev)} src="/assets/icons/message3.png" alt="message" className="relative w-8 h-8 md:w-10 md:h-10 mx-2 md:mx-4" />
               <div className="absolute right-0 top-0 -translate-x-1/2 -translate-y-1/3 w-6 h-6 rounded-full flex justify-center text-sm items-center text-gray-100 font-medium bg-rose-600">3</div>
             </div>
           </>
@@ -66,11 +77,11 @@ export default function Navbar() {
 
         <Bars3Icon
           onClick={() => setOpen((prev) => !prev)}
-          className="z-10 inline text-zinc-800 w-8 lg:w-10 cursor-pointer lg:hidden"
+          className="z-30 inline text-zinc-800 w-8 lg:w-10 cursor-pointer lg:hidden"
         />
 
         <div
-          className={`flex flex-col items-center justify-center gap-5 text-2xl font-semibold ${open ? "menu active" : "menu"}`}
+          className={`flex flex-col items-center justify-center text-zinc-800 gap-5 z-10 text-2xl font-semibold ${open ? "menu active" : "menu"}`}
         >
           <a href="/">Home</a>
           <a href="/">About</a>
@@ -80,6 +91,9 @@ export default function Navbar() {
           <a href="/">Sign up</a>
         </div>
       </div >
+
+      <Chat isOpen={isChatOpen} />
+
     </nav >
   );
 }

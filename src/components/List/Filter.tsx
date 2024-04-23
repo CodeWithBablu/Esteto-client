@@ -14,7 +14,7 @@ export default function Filter() {
         </div>
       </div>
 
-      <div className="bottom">
+      <div className="bottom grid grid-flow-row grid-cols-3 md:grid-cols-5 gap-y-5 gap-x-2 md:gap-y-0">
 
         <div className="item">
           <label htmlFor="type">Type</label>
@@ -37,6 +37,11 @@ export default function Filter() {
         </div>
 
         <div className="item">
+          <label htmlFor="city">Location</label>
+          <input type="text" name="city" id="city" placeholder="City Location" />
+        </div>
+
+        <div className="item">
           <label htmlFor="minPrice">Min Price</label>
           <input type="number" name="minPrice" id="minPrice" placeholder="any" />
         </div>
@@ -46,16 +51,12 @@ export default function Filter() {
           <input type="number" name="maxPrice" id="maxPrice" placeholder="any" />
         </div>
 
-        <div className="item">
-          <label htmlFor="city">Location</label>
-          <input type="text" name="city" id="city" placeholder="City Location" />
-        </div>
-
-        <button className="flex items-center gap-5 md:gap-0 text-xl text-gray-100 justify-center border-none cursor-pointer w-[100px] p-5 bg-blue-600 rounded-md">
-          <MagnifyingGlassIcon className="w-6 h-6" />
-          <span className="inline-block md:hidden">Search</span>
-        </button>
       </div>
+
+      <button className="flex items-center justify-center gap-5 text-xl text-gray-100 border-none cursor-pointer flex-grow h-14 min-w-[100px] bg-blue-600 rounded-md">
+        <MagnifyingGlassIcon className="inline-block w-6 h-6" />
+        <span className='inline-block'>Search</span>
+      </button>
 
     </div>
   );

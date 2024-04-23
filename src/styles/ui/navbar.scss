@@ -56,9 +56,10 @@ nav {
     width: 50%;
     transition: all 1s ease;
 
-    @include md {
-      a {
-        display: initial;
+    a {
+      display: initial;
+      &:hover {
+        color: #db2777;
       }
     }
 

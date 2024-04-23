@@ -1,3 +1,5 @@
+@import "../global/responsive.scss";
+
 .filter {
   display: flex;
   flex-direction: column;
@@ -15,7 +17,7 @@
 
     input,
     select {
-      width: 100px;
+      width: 100%;
       padding: 10px;
       border: 1px solid #e0e0e0;
       background-color: #ffffff;
@@ -35,10 +37,10 @@
     }
   }
 
-  .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-  }
+  // .bottom {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-items: center;
+  //   gap: 10px;
+  // }
 }
