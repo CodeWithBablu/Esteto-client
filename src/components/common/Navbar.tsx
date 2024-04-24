@@ -6,11 +6,11 @@ import clsx from "clsx";
 import Chat from "../Profile/Chat";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   const location = useLocation();
   const user = true;
-
-  const [isChatOpen, setIsChatOpen] = useState(true);
 
   return (
     <nav className=" z-30 w-full font-chillax">
@@ -85,12 +85,12 @@ export default function Navbar() {
         )}
 
         <Bars3Icon
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
           className="z-30 inline w-8 cursor-pointer text-zinc-800 lg:hidden lg:w-10"
         />
 
         <div
-          className={`z-10 flex flex-col items-center justify-center gap-5 text-2xl font-semibold text-zinc-800 ${open ? "menu active" : "menu"}`}
+          className={`z-10 flex flex-col items-center justify-center gap-5 text-2xl font-semibold text-zinc-800 ${isMenuOpen ? "menu active" : "menu"}`}
         >
           <a href="/">Home</a>
           <a href="/">About</a>
