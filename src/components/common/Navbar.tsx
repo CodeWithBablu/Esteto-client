@@ -18,17 +18,17 @@ export default function Navbar() {
         <div className="relative">
           <div
             className="animation-delay-4000 absolute bottom-0 left-16 h-10 w-10 animate-blob
-      rounded-full bg-rose-500 opacity-100 blur-xl filter"
+      rounded-full bg-rose-500 opacity-100 blur-xl"
           ></div>
 
           <div
             className="animation-delay-2000 absolute -top-5 left-32 h-10 w-10 animate-blob
-      rounded-full bg-cyan-600 opacity-100 blur-xl filter"
+      rounded-full bg-cyan-600 opacity-100 blur-xl"
           ></div>
 
           <a
             href="/"
-            className=" relative flex w-fit shrink-0 items-center md:w-12 lg:w-fit "
+            className=" relative flex w-fit shrink-0 items-center md:w-12 lg:w-fit bg-transparent"
           >
             <img
               className="h-10 w-10 -rotate-90 rounded-full lg:h-12 lg:w-12"
@@ -36,7 +36,7 @@ export default function Navbar() {
               alt="logo"
             />
 
-            <span className="z-10 ml-2 bg-gradient-to-r from-indigo-500 to-teal-500 bg-clip-text font-chillax text-4xl font-semibold text-transparent">
+            <span className="z-10 ml-2 font-chillax text-4xl font-semibold text-zinc-700">
               Esteto
             </span>
           </a>

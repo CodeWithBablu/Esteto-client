@@ -3,7 +3,7 @@
 .layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   max-width: 1366px;
   margin: 0 auto;
   padding: 0 20px;
@@ -21,15 +21,15 @@
   @include md {
     // background-color: rgb(239, 200, 200);
     max-width: 640px;
+    height: 100dvh;
   }
 
   .content {
-    height: calc(100vh - 80px);
-    padding-top: 40px;
+    height: calc(100dvh - 70px);
+    // padding-top: 40px;
 
     // @include md {
-    //   max-width: 640px;
-    //   height: calc(100vh - 80px);
+    //   padding-top: 0px;
     // }
   }
 }

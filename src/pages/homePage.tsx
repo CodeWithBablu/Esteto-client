@@ -6,7 +6,7 @@ export default function HomePage() {
     <div className="homePage font-poppins">
       <div className="textContainer">
         <div className="wrapper flex h-full flex-col justify-center gap-3 sm:gap-10">
-          <h1 className=" text-4xl font-medium md:text-6xl">
+          <h1 className=" text-3xl font-medium md:text-6xl">
             Find Real Estate & Get your dream place
           </h1>
 

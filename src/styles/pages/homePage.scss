@@ -8,6 +8,12 @@
   .textContainer {
     flex: 3;
 
+    @include md {
+      flex: none;
+      width: 100%;
+      height: 100%;
+    }
+
     .wrapper {
       padding-right: 100px;
 

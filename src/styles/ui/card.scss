@@ -3,6 +3,10 @@
 .card {
   gap: 10px;
 
+  @include md {
+    max-width: 450px;
+  }
+
   .imgContainer {
     flex: 2;
 
@@ -30,11 +34,15 @@
       height: 30px;
     }
 
-    .title {
+    .cardTitle {
       font-size: 20px;
       font-weight: 600;
       color: #4b5563;
       transition: all 0.4s ease;
+
+      @include md {
+        font-size: 16px;
+      }
 
       &:hover {
         scale: 1.01;
