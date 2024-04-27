@@ -50,12 +50,11 @@ nav {
     position: absolute;
     background-color: rgba(25, 25, 25, 0.8);
     backdrop-filter: blur(30px);
-    color: rgb(255, 255, 255);
     height: 100dvh;
     top: 0%;
     right: -50%;
     width: 50%;
-    transition: all 1s ease;
+    transition: all 0.5s ease;
 
     a {
       display: initial;

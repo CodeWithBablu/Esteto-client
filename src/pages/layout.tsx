@@ -2,15 +2,20 @@ import "../styles/global/layout.scss";
 
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../components";
+import { Toaster } from "react-hot-toast";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 
 export default function Layout() {
   return (
-    <div className="layout">
-      <Navbar />
-
-      <div className="content">
-        <Outlet />
-      </div>
-    </div>
+    <Theme>
+      <div className="layout">
+        <Navbar />
+        <Toaster />
+        <div className="content">
+          <Outlet />
+        </div>
+      </div >
+      <ThemePanel />
+    </Theme>
   );
 }

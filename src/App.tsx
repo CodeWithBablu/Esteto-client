@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { HomePage, Layout, ListPage, ProfilePage, SinglePage } from "./pages";
+import { HomePage, Layout, ListPage, LoginPage, ProfilePage, ProfileUpdatePage, RegisterPage, SinglePage } from "./pages";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +22,18 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "/profileupdate",
+        element: <ProfileUpdatePage />,
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
       },
     ],
   },

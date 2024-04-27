@@ -1,3 +1,11 @@
+export interface UserType {
+  _id: string;
+  username: string;
+  email: string;
+  avatar?: string;
+  createdAt: Date;
+}
+
 export interface Estate {
   id: number;
   title: string;

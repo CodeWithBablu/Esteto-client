@@ -23,10 +23,10 @@ export default function Chat({ isOpen }: { isOpen: boolean }) {
   return (
     <div
       className={clsx(
-        "absolute left-0 top-[70px] flex h-[calc(100dvh-70px)] w-full max-w-[640px] overflow-hidden bg-gradient-to-br from-slate-950/90 from-50% to-zinc-950/90 font-poppins backdrop-blur-3xl transition-all duration-200 ease-in-out sm:left-auto sm:right-0 sm:rounded-l-3xl",
+        "absolute left-0 top-[70px] flex h-[calc(100dvh-70px)] sm:h-[calc(100dvh-80px)] w-full max-w-[640px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:rounded-2xl",
         {
           "translate-x-0": isOpen,
-          "translate-x-full": !isOpen,
+          "translate-x-[calc(100%+2.5rem)]": !isOpen,
         },
       )}
     >
@@ -37,7 +37,7 @@ export default function Chat({ isOpen }: { isOpen: boolean }) {
           { "blur-sm": isMessageOpen },
         )}
       >
-        <div className="flex w-full items-center justify-between px-2 sm:px-5 pt-3 bg-zinc-900/80">
+        <div className="flex w-full items-center justify-between px-2 sm:px-5 pt-3">
           <div className="flex items-center gap-5 sm:gap-10">
             <img
               className="h-10 w-10 rounded-full object-cover sm:h-14 sm:w-14"
@@ -53,7 +53,7 @@ export default function Chat({ isOpen }: { isOpen: boolean }) {
           {/* <XMarkIcon className="w-8 hidden text-gray-300 mr-4" /> */}
         </div>
 
-        <div className="pt-2 pb-3 flex items-center gap-5 px-2 sm:px-5 bg-zinc-900/80">
+        <div className="pt-2 pb-3 flex items-center gap-5 px-2 sm:px-5">
           <hr className=" w-[60px] border-orange-400" />
           <h2 className=" font-chillax text-[20px] font-medium text-orange-600">
             Messages

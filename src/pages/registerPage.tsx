@@ -1,12 +1,12 @@
-import "../styles/pages/auth.scss";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
+import "../styles/pages/auth.scss";
+
+import { Link } from "react-router-dom";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useContext, useState } from "react";
-import { UserType, errorHandler, toastMessage } from "../lib";
+import { errorHandler, toastMessage } from "../lib";
 import clsx from "clsx";
-import { AuthContext } from "@/context/AuthContext";
 
 const Loader = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
   <path d="M3.05469 13H5.07065C5.55588 16.3923 8.47329 19 11.9998 19C15.5262 19 18.4436 16.3923 18.9289 13H20.9448C20.4474 17.5 16.6323 21 11.9998 21C7.36721 21 3.55213 17.5 3.05469 13ZM3.05469 11C3.55213 6.50005 7.36721 3 11.9998 3C16.6323 3 20.4474 6.50005 20.9448 11H18.9289C18.4436 7.60771 15.5262 5 11.9998 5C8.47329 5 5.55588 7.60771 5.07065 11H3.05469Z"></path>
@@ -14,16 +14,14 @@ const Loader = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class
 
 interface IFormInput {
   username: string;
+  email: string;
   password: string;
 }
 
-function LoginPage() {
-
+function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { updateUser } = useContext(AuthContext) as { updateUser: (data: UserType) => void };
 
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -31,14 +29,13 @@ function LoginPage() {
   } = useForm<IFormInput>();
 
 
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setError("");
     setIsLoading(true);
     try {
-      const res = await axios.post(`/api/auth/login`, data);
-      updateUser(res.data.value);
+      const res = await axios.post(`/api/auth/register`, data);
       toastMessage("success", res.data.message, 4000);
-      navigate("/");
     } catch (error) {
       console.log(error);
 
@@ -46,8 +43,7 @@ function LoginPage() {
         setError(error.response?.data.message);
       }
       else
-        setError(errorHandler(error, "Failed to log in") as string);
-
+        setError(errorHandler(error, "Failed to signup") as string);
     } finally {
       setIsLoading(false);
     }
@@ -59,33 +55,39 @@ function LoginPage() {
 
         <div className="relative">
 
-          <form onSubmit={handleSubmit(onSubmit)} className="z-20 relative">
-            <h1 className="font-[500] font-chillax text-lg">Welcome back</h1>
+          <form onSubmit={handleSubmit(onSubmit)} className="relative z-20">
+            <h1 className="font-[500] font-chillax text-lg">Create an Account</h1>
 
-            <input {...register("username", { required: "username or email invalid. max: 30", maxLength: 30 })}
+            <input {...register("username", { required: "username is required. max: 20", maxLength: 20 })}
               aria-invalid={errors.username ? "true" : "false"}
-              name="username" type="text" placeholder="Username or email" autoComplete="username" />
+              name="username" type="text" placeholder="Username" autoComplete="username" />
             {errors.username && <p role="alert"><ExclamationCircleIcon className="w-6" /> {errors.username.message}</p>}
+
+            <input {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
+              aria-invalid={errors.email ? "true" : "false"}
+              name="email" type="text" placeholder="Email" autoComplete="email" />
+            {errors.email && <p role="alert"><ExclamationCircleIcon className="w-6" />Pleas enter a valid email address</p>}
 
             <input {...register("password", { required: true, minLength: 5 })}
               aria-invalid={errors.password ? "true" : "false"}
               name="password" type="password" placeholder="Password" autoComplete="current-password" />
-            {errors.password && <p role="alert"><ExclamationCircleIcon className="w-6" />password is invalid. min: 5</p>}
+            {errors.password && <p role="alert"><ExclamationCircleIcon className="w-6" />Password is required. min: 5</p>}
 
             <div className="relative flex items-center justify-center">
-              <span className="absolute animate-spin text-gray-600">{Loader}</span>
+              <span className="absolute animate-spin text-zinc-800">{Loader}</span>
               <button type="submit" className={clsx(
                 'relative w-full',
                 { 'opacity-50': isLoading }
-              )}>Login</button>
+              )}>Sign Up</button>
             </div>
             {error && <p role="alert"><ExclamationCircleIcon className="w-6" />{error}</p>}
 
-            <Link to="/register">Do you have an account?</Link>
+            <Link to="/login">Do you have an account?</Link>
           </form>
 
           <div className="z-10 absolute -left-[4rem] -top-[7.5rem] md:hidden h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-violet-500/50 opacity-60 blur-xl"></div>
-          <div className="z-10 animation-delay-7000 absolute -right-[3rem] -bottom-[7.5rem] md:hidden h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-indigo-500/50 opacity-70 blur-xl"></div>
+          <div className="z-10 animation-delay-7000 absolute -right-[3rem] -bottom-[5.5rem] md:hidden h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-indigo-500/50 opacity-70 blur-xl"></div>
+
         </div>
 
       </div>
@@ -107,4 +109,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;

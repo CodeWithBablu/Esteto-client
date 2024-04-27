@@ -4,15 +4,16 @@ import "../styles/pages/profilePage.scss";
 
 export default function ProfilePage() {
   return (
-    <div className="profilePage font-poppins">
+    <div className="profilePage font-poppins pt-10">
       <div className="details no-scrollbar ">
-        <div className="wrapper">
-          <div className="info flex flex-col items-center gap-5 rounded-xl bg-gradient-to-r from-blue-100 to-rose-100 py-10 md:flex-row md:gap-10 md:p-3">
+        <div className="wrapper flex flex-col">
+
+          <div className="info flex flex-col items-center w-full gap-5 bg-slate-200 rounded-xl py-10 md:flex-row md:gap-10 md:p-3">
             <div>
               <img
                 src="https://images.pexels.com/photos/6256894/pexels-photo-6256894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                 alt="profileimg"
-                className="h-20 w-20 rounded-full object-cover"
+                className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover"
               />
             </div>
 
@@ -20,7 +21,7 @@ export default function ProfilePage() {
               <div className="top flex items-end justify-center gap-3 font-chillax md:justify-start">
                 <h1 className="text-2xl font-medium text-gray-500">Hey!</h1>
                 <div className="h-auto overflow-hidden">
-                  <span className="inline-block animate-fadeIn text-4xl font-semibold text-pink-500">
+                  <span className="inline-block animate-fadeIn text-4xl font-semibold text-indigo-500">
                     John
                   </span>
                 </div>
@@ -35,7 +36,10 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+
           </div>
+
+          <button className="bg-red-500 text-gray-100 font-semibold px-6 py-3 rounded-full self-end">logout</button>
 
           <div className="title">
             <h1 className="font-chillax text-2xl font-semibold">My List</h1>
