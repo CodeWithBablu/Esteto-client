@@ -54,12 +54,12 @@ nav {
     top: 0%;
     right: -50%;
     width: 50%;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease-in-out;
 
     a {
       display: initial;
       &:hover {
-        color: #db2777;
+        color: #6b7280;
       }
     }
 

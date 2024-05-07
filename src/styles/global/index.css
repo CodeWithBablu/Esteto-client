@@ -1,4 +1,4 @@
-@import '@radix-ui/themes/styles.css';
+@import "@radix-ui/themes/styles.css";
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +9,7 @@
   margin: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: #3f3f46 rgba(0, 0, 0, 0);
+  scrollbar-color: #4b5563 rgba(0, 0, 0, 0);
 }
 
 ::-webkit-scrollbar {
@@ -17,7 +17,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #3f3f46; /* Color of the scrollbar handle */
+  background-color: #4b5563; /* Color of the scrollbar handle */
   border-radius: 5px; /* Rounded corners of the scrollbar handle */
 }
 
@@ -30,7 +30,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #3f3f46; /* Color of the scrollbar handle when hovered */
+  background-color: #4b5563; /* Color of the scrollbar handle when hovered */
 }
 
 html,

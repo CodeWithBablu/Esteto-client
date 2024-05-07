@@ -8,7 +8,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [currUser, setCurrUser] = useState(
     localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null
   );
-
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(currUser));
     return () => {

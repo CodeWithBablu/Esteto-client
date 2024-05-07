@@ -103,14 +103,25 @@ export default function Navbar() {
           <a href="/">About</a>
           <a href="/">Contact</a>
           <a href="/">Agents</a>
-          <a href="/login">Sign in</a>
-          <a href="/register">Sign up</a>
+          {
+            currUser ?
+              <>
+                <a href="/profile">Profile</a>
+                <a className="mt-5 text-red-500" href="/profile">Logout</a>
+              </> :
+              <>
+                <a href="/login">Sign in</a>
+                <a href="/register">Sign up</a>
+              </>
+
+          }
+
         </div>
 
 
       </div>
 
       <Chat isOpen={isChatOpen} />
-    </nav>
+    </nav >
   );
 }

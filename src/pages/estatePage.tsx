@@ -1,40 +1,48 @@
-import { MapIcon } from "@heroicons/react/24/outline";
-import { Map, Slider } from "../components";
-import { singlePostData, userData } from "../lib/dummyData";
-
 import "../styles/pages/estatePage.scss";
 
+import { MapIcon } from "@heroicons/react/24/outline";
+import { Map, Slider } from "../components";
+import { useLoaderData } from "react-router-dom";
+import DOMPurify from 'dompurify';
+import { Tooltip } from "@radix-ui/themes";
+import { Estate } from "@/lib";
+
 export default function EstatePage() {
+  const estate = useLoaderData() as Estate;
   return (
     <div className="estatePage no-scrollbar font-poppins">
       <div className="details no-scrollbar">
-        <div className="wrapper">
-          {singlePostData.images && <Slider images={singlePostData.images} />}
+        <div className="wrapper mt-5 xl:mt-0">
+          {estate.images && <Slider images={estate.images} />}
           <div className="info">
-            <div className="top">
+            <div className="top flex flex-col gap-5 sm:flex-row sm:justify-between">
               <div className="post">
                 <h1 className="text-2xl font-semibold text-gray-700">
-                  {singlePostData.title}
+                  {estate.title}
                 </h1>
                 <div className="address">
                   <MapIcon className="w-5" />
-                  <span>{singlePostData.address}</span>
+                  <span>{estate.address}</span>
                 </div>
-                <span className="price">$ {singlePostData.price}</span>
+                <span className="price">{estate.price}</span>
               </div>
 
-              <div className="user min-w-36 bg-gradient-radial from-blue-800 px-5 py-[10px] sm:px-10">
-                <img src={userData.img} alt={userData.name} />
-                <span>{userData.name}</span>
-              </div>
+              <Tooltip className="text-2xl" content={estate.user.username.slice(0, 30)}>
+                <div className="user w-fit min-w-36 bg-gradient-radial from-blue-800 px-3 py-5 sm:px-5">
+                  <img src={estate.user.avatar} alt={estate.user.username} />
+                  <span>{estate.user.username.slice(0, 15)}</span>
+                </div>
+              </Tooltip>
+
             </div>
-            <div className="bottom">{singlePostData.description}</div>
+
+            <div className="bottom" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(estate.postdetail.desc) }}></div>
           </div>
         </div>
       </div>
 
-      <div className="features no-scrollbar rounded-xl bg-gray-200 lg:rounded-none">
-        <div className="wrapper">
+      <div className="features no-scrollbar rounded-xl sm:bg-gray-200 lg:rounded-none">
+        <div className="wrapper py-[10px] sm:px-[20px]">
           <div>
             <p className="title">General</p>
             <div className="listVertical rounded-xl bg-gradient-to-r from-rose-100  to-lime-200 p-2 shadow-lg shadow-gray-300 md:p-3">
@@ -42,7 +50,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/utility.png" alt="utility" />
                 <div className="featureText">
                   <span>Utilities</span>
-                  <p>Renter is responsible</p>
+                  <p>{estate.postdetail.utilities}</p>
                 </div>
               </div>
 
@@ -50,7 +58,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/pet.png" alt="pet" />
                 <div className="featureText">
                   <span>Pet policy</span>
-                  <p>Pets Allowed</p>
+                  <p>{estate.postdetail.pet}</p>
                 </div>
               </div>
 
@@ -58,7 +66,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/fee.png" alt="utility" />
                 <div className="featureText">
                   <span>Property Fees</span>
-                  <p>Must have 3x the rent in toal household income</p>
+                  <p>{estate.postdetail.income}</p>
                 </div>
               </div>
             </div>
@@ -66,17 +74,17 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Room Sizes</p>
-            <div className="listHorizontal flex justify-around rounded-xl bg-gradient-to-r from-blue-200 to-stone-200 p-2 shadow-lg shadow-gray-300 md:p-3">
+            <div className="listHorizontal flex flex-col sm:flex-row gap-3 justify-around rounded-xl bg-gradient-to-r from-blue-200 to-stone-200 p-2 shadow-lg shadow-gray-300 md:p-3">
               <div className="size">
                 <img src="/assets/icons/size.png" alt="size" />
-                <span>80 sqft 8.61 ft</span>
+                <span>{estate.postdetail.size} sqft</span>
               </div>
 
               <div className="size">
                 <img src="/assets/icons/bed.png" alt="bed" />
                 <span>
-                  1{" "}
-                  <span className="hidden sm:inline-block lg:hidden xl:inline-block">
+                  {estate.bedroom}{" "}
+                  <span className="inline-block lg:hidden xl:inline-block">
                     beds
                   </span>
                 </span>
@@ -85,9 +93,9 @@ export default function EstatePage() {
               <div className="size">
                 <img src="/assets/icons/bath.png" alt="bath" />
                 <span>
-                  1{" "}
-                  <span className="hidden sm:inline-block lg:hidden xl:inline-block">
-                    bathrooom
+                  {estate.bathroom}{" "}
+                  <span className="inline-block lg:hidden xl:inline-block">
+                    baths
                   </span>
                 </span>
               </div>
@@ -101,7 +109,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/school.png" alt="school" />
                 <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
                   <span className=" font-[600]">School</span>
-                  <p>250m away</p>
+                  <p>{estate.postdetail.school}</p>
                 </div>
               </div>
 
@@ -109,7 +117,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/bus.png" alt="bus" />
                 <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
                   <span className=" font-[600]">Bus Stop</span>
-                  <p>100m away</p>
+                  <p>{estate.postdetail.bus}</p>
                 </div>
               </div>
 
@@ -117,7 +125,7 @@ export default function EstatePage() {
                 <img src="/assets/icons/restaurant.png" alt="Restaurant" />
                 <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
                   <span className=" font-[600]">Restaurant</span>
-                  <p>200m away</p>
+                  <p>{estate.postdetail.restaurant}</p>
                 </div>
               </div>
             </div>
@@ -126,7 +134,7 @@ export default function EstatePage() {
           <div>
             <p className="title">Location</p>
             <div className="mapContainer">
-              <Map data={[singlePostData]} />
+              <Map data={[estate]} />
             </div>
           </div>
 
@@ -143,6 +151,6 @@ export default function EstatePage() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

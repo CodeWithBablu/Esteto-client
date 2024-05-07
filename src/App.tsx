@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { HomePage, Layout, ListPage, LoginPage, ProfilePage, ProfileUpdatePage, RegisterPage, SinglePage } from "./pages";
+import { HomePage, Layout, ListPage, LoginPage, NewPostPage, ProfilePage, ProfileUpdatePage, RegisterPage, RequireAuth, SinglePage } from "./pages";
+import { listPageLoader, singlePageLoader } from "./lib";
 
 const router = createBrowserRouter([
   {
@@ -14,18 +15,12 @@ const router = createBrowserRouter([
       {
         path: "/list",
         element: <ListPage />,
+        loader: listPageLoader,
       },
       {
-        path: "/:id",
+        path: "estate/:id",
         element: <SinglePage />,
-      },
-      {
-        path: "/profile",
-        element: <ProfilePage />,
-      },
-      {
-        path: "/profileupdate",
-        element: <ProfileUpdatePage />,
+        loader: singlePageLoader,
       },
       {
         path: "/register",
@@ -34,6 +29,24 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <RequireAuth />,
+    children: [
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "/profile/update",
+        element: <ProfileUpdatePage />,
+      },
+      {
+        path: "/add",
+        element: <NewPostPage />,
       },
     ],
   },

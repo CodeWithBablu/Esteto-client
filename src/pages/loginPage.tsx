@@ -62,15 +62,15 @@ function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="z-20 relative">
             <h1 className="font-[500] font-chillax text-lg">Welcome back</h1>
 
-            <input {...register("username", { required: "username or email invalid. max: 30", maxLength: 30 })}
+            <input {...register("username", { required: "username or email invalid. max: 25", maxLength: 25 })}
               aria-invalid={errors.username ? "true" : "false"}
               name="username" type="text" placeholder="Username or email" autoComplete="username" />
-            {errors.username && <p role="alert"><ExclamationCircleIcon className="w-6" /> {errors.username.message}</p>}
+            {errors.username && <p role="alert"><ExclamationCircleIcon className="w-6 inline-block mr-1" /> {errors.username.message}</p>}
 
             <input {...register("password", { required: true, minLength: 5 })}
               aria-invalid={errors.password ? "true" : "false"}
               name="password" type="password" placeholder="Password" autoComplete="current-password" />
-            {errors.password && <p role="alert"><ExclamationCircleIcon className="w-6" />password is invalid. min: 5</p>}
+            {errors.password && <p role="alert"><ExclamationCircleIcon className="w-6 inline-block mr-1" />password is invalid. min: 5</p>}
 
             <div className="relative flex items-center justify-center">
               <span className="absolute animate-spin text-gray-600">{Loader}</span>
@@ -79,7 +79,7 @@ function LoginPage() {
                 { 'opacity-50': isLoading }
               )}>Login</button>
             </div>
-            {error && <p role="alert"><ExclamationCircleIcon className="w-6" />{error}</p>}
+            {error && <p role="alert"><ExclamationCircleIcon className="w-6 inline-block mr-1" />{error}</p>}
 
             <Link to="/register">Do you have an account?</Link>
           </form>

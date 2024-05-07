@@ -1,21 +1,49 @@
 import "../styles/global/layout.scss";
 
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Navbar } from "../components";
-import { Toaster } from "react-hot-toast";
-import { Theme, ThemePanel } from "@radix-ui/themes";
+import { Theme } from "@radix-ui/themes";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { UserType } from "@/lib";
 
-export default function Layout() {
+export function Layout() {
   return (
     <Theme>
       <div className="layout">
         <Navbar />
-        <Toaster />
+        {/* <Toaster /> */}
         <div className="content">
           <Outlet />
         </div>
       </div >
-      <ThemePanel />
+      {/* <ThemePanel /> */}
     </Theme>
   );
 }
+
+export function RequireAuth() {
+  const { currUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
+
+
+  if (!currUser) <Navigate to={"/login"} />
+
+  return (
+    currUser ? (
+      <Theme>
+        <div className="layout">
+          <Navbar />
+          {/* <Toaster /> */}
+          <div className="content">
+            <Outlet />
+          </div>
+        </div >
+        {/* <ThemePanel /> */}
+      </Theme>
+    ) : (
+      <Navigate to={"/login"} />
+    )
+  );
+}
+
+export default { Layout, RequireAuth };

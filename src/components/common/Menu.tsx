@@ -17,7 +17,7 @@ export default function Menu() {
       localStorage.removeItem("user");
       updateUser(null);
       toastMessage("success", "Logout successfully", 4000);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.log(error);
 
@@ -35,12 +35,12 @@ export default function Menu() {
         <DropdownMenu.Trigger>
           <div className="flex items-center cursor-pointer">
             {
-              currUser?.avatar ? <img src={currUser.avatar} className="h-8 w-8" alt="avatar" /> :
+              currUser?.avatar ? <img src={currUser.avatar} className="h-8 w-8 rounded-full object-cover" alt="avatar" /> :
                 <UserCircleIcon className="mx-2 h-8 w-8 text-zinc-600 md:h-10 md:w-10" />
             }
             {
               currUser?.username &&
-              <span className=" mx-4 hidden text-zinc-600 text-xl font-[500] lg:inline-block">
+              <span className=" mx-4 hidden capitalize text-zinc-600 text-xl font-[500] lg:inline-block">
                 {currUser?.username.slice(0, 20)}{currUser?.username.length > 20 ? '...' : ''}
               </span>
             }

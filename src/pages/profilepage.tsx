@@ -1,51 +1,56 @@
+import "../styles/pages/profilePage.scss";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { List } from "../components";
-import "../styles/pages/profilePage.scss";
+import { AuthContext } from "@/context/AuthContext";
+import { UserType } from "@/lib";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
+  const { currUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
+
   return (
     <div className="profilePage font-poppins pt-10">
       <div className="details no-scrollbar ">
         <div className="wrapper flex flex-col">
 
-          <div className="info flex flex-col items-center w-full gap-5 bg-slate-200 rounded-xl py-10 md:flex-row md:gap-10 md:p-3">
+          <div className="info flex items-center flex-col w-full gap-5 rounded-xl py-3 sm:py-10 xs:flex-row xs:gap-10">
             <div>
               <img
                 src="https://images.pexels.com/photos/6256894/pexels-photo-6256894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                 alt="profileimg"
-                className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover"
+                className="h-16 w-16 sm:h-24 sm:w-24 rounded-full object-cover"
               />
             </div>
 
-            <div className="flex flex-col gap-5">
-              <div className="top flex items-end justify-center gap-3 font-chillax md:justify-start">
+            <div className="flex flex-col gap-2">
+              <div className="top flex items-end justify-center gap-3 font-chillax xs:justify-start">
                 <h1 className="text-2xl font-medium text-gray-500">Hey!</h1>
                 <div className="h-auto overflow-hidden">
-                  <span className="inline-block animate-fadeIn text-4xl font-semibold text-indigo-500">
-                    John
+                  <span className="inline-block capitalize animate-fadeIn text-2xl font-[500] text-blue-500">
+                    {currUser?.username}
                   </span>
                 </div>
               </div>
 
-              <div className="bottominfo text-center md:text-left">
+              <div className="bottominfo text-center xs:text-left">
                 <div>
-                  <h2 className="text-xl">Email</h2>
+                  <h2 className="text-xl text-gray-500">Email</h2>
                   <span className="font-chillax">
-                    babasahebbhalekar8245@gmail.com
+                    {currUser?.email}
                   </span>
                 </div>
               </div>
             </div>
-
           </div>
 
-          <button className="bg-red-500 text-gray-100 font-semibold px-6 py-3 rounded-full self-end">logout</button>
+          <Link to={"/profile/update"} className=" xs:w-fit py-2 px-6 bg-zinc-900 rounded-md text-center text-lg font-semibold text-gray-100">UPDATE</Link>
 
           <div className="title">
             <h1 className="font-chillax text-2xl font-semibold">My List</h1>
-            <button className=" flex items-center rounded-md bg-blue-600 px-4 py-3 font-medium text-gray-100">
+            <Link to={"/add"} className=" flex items-center rounded-md bg-blue-600 px-4 py-3 font-medium text-gray-100">
               Create Posts <PlusIcon className="w-6" />
-            </button>
+            </Link>
           </div>
 
           <List />

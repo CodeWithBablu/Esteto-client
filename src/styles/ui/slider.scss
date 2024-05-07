@@ -4,10 +4,6 @@
   width: 100%;
   gap: 20px;
 
-  // @include md {
-  //   flex-direction: column;
-  // }
-
   .fullSlider {
     z-index: 40;
     position: absolute;
@@ -27,13 +23,7 @@
     cursor: pointer;
   }
 
-  .bigImage {
-    flex: 3;
-  }
-
   .smallImages {
-    flex: 1;
-
     img {
       height: 100px;
       min-width: 150px;

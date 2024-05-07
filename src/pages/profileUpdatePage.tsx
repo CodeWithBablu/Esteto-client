@@ -1,36 +1,114 @@
-// import "./profileUpdatePage.scss";
+import "@/styles/pages/profileupdatePage.scss";
+import { AuthContext } from "@/context/AuthContext";
+import { UserType, errorHandler, toastMessage } from "@/lib";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import axios, { AxiosError } from "axios";
+import clsx from "clsx";
+import { useContext, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { UploadWidget } from "@/components";
+
+const Loader = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
+  <path d="M3.05469 13H5.07065C5.55588 16.3923 8.47329 19 11.9998 19C15.5262 19 18.4436 16.3923 18.9289 13H20.9448C20.4474 17.5 16.6323 21 11.9998 21C7.36721 21 3.55213 17.5 3.05469 13ZM3.05469 11C3.55213 6.50005 7.36721 3 11.9998 3C16.6323 3 20.4474 6.50005 20.9448 11H18.9289C18.4436 7.60771 15.5262 5 11.9998 5C8.47329 5 5.55588 7.60771 5.07065 11H3.05469Z"></path>
+</svg>;
+
+interface IFormInput {
+  username: string;
+  email: string;
+  avatar?: string;
+  password: string;
+}
+
 
 function ProfileUpdatePage() {
+
+  const [avatar, setAvatar] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { currUser, updateUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
+
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>();
+
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    data = { ...data, username: data.username.toLowerCase(), email: data.email.toLowerCase(), ...({ avatar: avatar[0] }) };
+    setError("");
+    setIsLoading(true);
+    try {
+      const res = await axios.put(`/api/user/${currUser?._id}`, data);
+      updateUser(res.data.value);
+      toastMessage("success", res.data.message, 4000);
+      navigate("/profile");
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        setError(error.response?.data.message);
+      }
+      else
+        setError(errorHandler(error, "Failed to log in") as string);
+
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="profileUpdatePage">
-      <div className="formContainer">
-        <form>
-          <h1>Update Profile</h1>
-          <div className="item">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-            />
+
+      <div className="formContainer flex md:items-center justify-center">
+
+        <form onSubmit={handleSubmit(onSubmit)} className="relative z-20">
+          <h1 className="font-[500] font-chillax text-lg">Update Profile</h1>
+
+          <input {...register("username", { required: "username is required. max: 20", maxLength: 20 })}
+            aria-invalid={errors.username ? "true" : "false"} defaultValue={currUser?.username}
+            name="username" type="text" placeholder="Username" autoComplete="username" />
+          {errors.username && <p role="alert"><ExclamationCircleIcon className="w-6 inline-block mr-1" /> {errors.username.message}</p>}
+
+          <input {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
+            aria-invalid={errors.email ? "true" : "false"} defaultValue={currUser?.email}
+            name="email" type="text" placeholder="Email" autoComplete="email" />
+          {errors.email && <p role="alert"><ExclamationCircleIcon className="w-6 inline-block mr-1" />Pleas enter a valid email address</p>}
+
+          <input {...register("password")}
+            aria-invalid={errors.password ? "true" : "false"}
+            name="password" type="password" placeholder="Password" autoComplete="current-password" />
+
+          <div className="relative flex items-center justify-center">
+            {isLoading &&
+              <span className="absolute z-20 animate-spin text-zinc-800">{Loader}</span>}
+            <button type="submit" className={clsx(
+              'relative w-full',
+              { 'opacity-50 pointer-events-none': isLoading },
+              { 'opacity-100': !isLoading },
+            )}>Update</button>
+
           </div>
-          <div className="item">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-            />
-          </div>
-          <div className="item">
-            <label htmlFor="password">Password</label>
-            <input id="password" name="password" type="password" />
-          </div>
-          <button>Update</button>
+          {error && <p role="alert" className="text-rose-500 font-medium"><ExclamationCircleIcon className="w-6" />{error}</p>}
+
+          <Link to="/login">Do you have an account?</Link>
         </form>
+
       </div>
-      <div className="sideContainer">
-        <img src="" alt="" className="avatar" />
+
+
+      <div className="sideContainer relative flex flex-col items-center justify-center lg:bg-slate-200">
+        <img src={avatar[0] || currUser?.avatar || "/assets/icons/avatar.svg"} alt="avatar" />
+        <UploadWidget uwConfig={{
+          cloudName: "codewithbablu",
+          uploadPreset: "esteto",
+          multiple: false,
+          maxImageFileSize: 2000000,
+          folders: "avatars"
+        }}
+          setState={setAvatar} />
       </div>
     </div>
   );

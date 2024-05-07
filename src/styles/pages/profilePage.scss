@@ -11,7 +11,7 @@
     padding-bottom: 100px;
 
     .wrapper {
-      padding-right: 100px;
+      padding-right: 20px;
 
       @include xl {
         padding-right: 0;
@@ -27,6 +27,6 @@
   }
 
   .chatContainer {
-    flex: 1;
+    flex: 2;
   }
 }

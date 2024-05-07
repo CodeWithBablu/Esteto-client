@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import "../styles/pages/auth.scss";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
@@ -19,6 +19,7 @@ interface IFormInput {
 }
 
 function RegisterPage() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -31,11 +32,13 @@ function RegisterPage() {
 
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    data = { ...data, username: data.username.toLowerCase(), email: data.email.toLowerCase() };
     setError("");
     setIsLoading(true);
     try {
       const res = await axios.post(`/api/auth/register`, data);
       toastMessage("success", res.data.message, 4000);
+      navigate("/");
     } catch (error) {
       console.log(error);
 
@@ -84,9 +87,6 @@ function RegisterPage() {
 
             <Link to="/login">Do you have an account?</Link>
           </form>
-
-          <div className="z-10 absolute -left-[4rem] -top-[7.5rem] md:hidden h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-violet-500/50 opacity-60 blur-xl"></div>
-          <div className="z-10 animation-delay-7000 absolute -right-[3rem] -bottom-[5.5rem] md:hidden h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-indigo-500/50 opacity-70 blur-xl"></div>
 
         </div>
 
