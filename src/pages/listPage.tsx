@@ -21,7 +21,7 @@ export default function ListPage() {
             >
               {(postResponse: { data: { value: EstateRaw[] } }) => (
                 postResponse.data.value.map((estate) => (
-                  <Card key={estate._id} item={estate} />
+                  <Card key={estate._id} item={estate} btnDisabled={false} />
                 ))
               )}
             </Await>

@@ -1,12 +1,21 @@
 import "../styles/pages/profilePage.scss";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { List } from "../components";
+import { Await, Link, useLoaderData } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
-import { UserType } from "@/lib";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Suspense, useContext } from "react";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { CardSkeleton, List } from "../components";
+import { EstateRaw, UserType } from "@/lib";
 
 export default function ProfilePage() {
+  const res = useLoaderData() as {
+    user: Promise<{
+      value: {
+        userPosts: EstateRaw[],
+        savedPosts: EstateRaw[],
+      }
+    }>
+  };
+
   const { currUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
 
   return (
@@ -53,14 +62,46 @@ export default function ProfilePage() {
             </Link>
           </div>
 
-          <List />
+          <Suspense fallback={<><CardSkeleton /><CardSkeleton /></>}>
+            <Await
+              resolve={res.user}
+              errorElement={<p>Error loading posts!</p>}
+            >
+              {(res: { data: { value: { userPosts: EstateRaw[], savedPosts: EstateRaw[] } } }) => {
+
+                return <>
+                  {res.data.value.userPosts.length > 0 ?
+                    <List listData={res.data.value.userPosts} btnDisabled={true} />
+                    :
+                    <span className=" text-gray-500">** Nothing to show</span>
+                  }
+                </>
+              }}
+            </Await>
+          </Suspense>
 
           <div className="title">
             <h1 className="font-chillax text-2xl font-semibold">Saved List</h1>
-            <button className=" flex items-center rounded-md bg-blue-600 px-4 py-3 font-medium text-gray-100">
-              Create Posts <PlusIcon className="w-6" />
-            </button>
           </div>
+
+          <Suspense fallback={<><CardSkeleton /><CardSkeleton /></>}>
+            <Await
+              resolve={res.user}
+              errorElement={<p>Error loading posts!</p>}
+            >
+              {(res: { data: { value: { userPosts: EstateRaw[], savedPosts: EstateRaw[] } } }) => {
+
+                return <>
+                  {res.data.value.savedPosts.length > 0 ?
+                    <List listData={res.data.value.savedPosts} btnDisabled={false} />
+                    :
+                    <span className=" text-gray-500">** Nothing to show</span>
+                  }
+                </>
+              }}
+            </Await>
+          </Suspense>
+
         </div>
       </div>
 

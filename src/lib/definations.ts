@@ -21,6 +21,7 @@ export interface Estate {
   property: 'apartment' | 'house' | 'condo' | 'land';
   createdAt?: string;
   updatedAt?: string;
+  isSaved?: boolean;
   user: {
     _id: string,
     username: string,
@@ -54,6 +55,7 @@ export interface EstateRaw {
   property: 'apartment' | 'house' | 'condo' | 'land';
   createdAt?: string;
   updatedAt?: string;
+  isSaved?: boolean;
   user: string;
   postdetail: string;
 }

@@ -1,7 +1,7 @@
 @import "../global/responsive.scss";
 
 .card {
-  gap: 10px;
+  gap: 20px;
 
   @include md {
     max-width: 450px;
@@ -87,7 +87,6 @@
       .icons {
         display: flex;
         align-items: center;
-        gap: 10px;
 
         .icon {
           width: 40px;

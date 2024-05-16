@@ -1,21 +1,17 @@
 import axios from "axios"
 import { LoaderFunctionArgs, defer } from "react-router-dom";
+import { formatCurrency } from "./formatCurrency";
 
 export const singlePageLoader = async ({ request, params }: LoaderFunctionArgs) => {
   let data = (await axios.get(`/api/post/${params.id}`)).data.value;
   const postDetail = data.postdetail;
   const user = data.user;
 
-  const usDollar = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-
   data = {
     ...data,
     bedroom: data.bedroom !== 0 ? '--' : data.bedroom,
     bathroom: data.bathroom !== 0 ? '--' : data.bathroom,
-    price: usDollar.format(data.price),
+    price: formatCurrency(data.price),
     user: user,
     postdetail: {
       ...data.postdetail,
@@ -24,6 +20,7 @@ export const singlePageLoader = async ({ request, params }: LoaderFunctionArgs) 
       restaurant: postDetail.restaurant > 0 ? (postDetail.restaurant > 999 ? `${postDetail.restaurant / 1000} km` : `${postDetail.restaurant} m`) : '--',
     }
   }
+
   return data;
 }
 
@@ -35,5 +32,14 @@ export const listPageLoader = async ({ request, params }: LoaderFunctionArgs) =>
 
   return defer({
     posts: res,
+  });
+}
+
+
+export const profilePageLoader = async ({ request, params }: LoaderFunctionArgs) => {
+
+  const res = axios.get(`/api/user/profilePosts`);
+  return defer({
+    user: res,
   });
 }
