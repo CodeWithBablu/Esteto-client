@@ -99,8 +99,14 @@ function ProfileUpdatePage() {
       </div>
 
 
-      <div className="sideContainer relative flex flex-col items-center justify-center lg:bg-slate-200">
-        <img src={avatar[0] || currUser?.avatar || "/assets/icons/avatar.svg"} alt="avatar" />
+      <div className="sideContainer relative flex flex-col items-center justify-center lg:bg-slate-100">
+        {currUser?.avatar?.includes('<svg') ? (
+          <div className="h-[15rem] w-full max-w-[250px]" dangerouslySetInnerHTML={{ __html: currUser?.avatar }}></div>
+
+        ) : (
+          <img src={avatar[0] || currUser?.avatar || "/assets/icons/avatar.svg"} alt="avatar" />
+
+        )}
         <UploadWidget uwConfig={{
           cloudName: "codewithbablu",
           uploadPreset: "esteto",

@@ -6,6 +6,7 @@ import axios, { AxiosError } from "axios";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+
 export default function Menu() {
 
   const { currUser, updateUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
@@ -33,21 +34,39 @@ export default function Menu() {
     <Theme accentColor="blue" className="font-chillax" radius="full">
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
+
           <div className="flex items-center cursor-pointer">
             {
-              currUser?.avatar ? <img src={currUser.avatar} className="h-8 w-8 rounded-full object-cover" alt="avatar" /> :
+              currUser ? (
+                <>
+                  {
+                    currUser.avatar ? (
+                      <>
+                        {(!currUser.avatar.includes('<svg')) &&
+                          <img src={currUser.avatar} className="h-8 w-8 rounded-full object-cover" alt="avatar" />
+                        }
+                        {(currUser.avatar.includes('<svg')) &&
+                          <div className=" w-8 h-8" dangerouslySetInnerHTML={{ __html: currUser?.avatar as string }} />
+                        }
+                      </>
+                    ) :
+                      <UserCircleIcon className="mx-2 h-8 w-8 text-zinc-600 md:h-10 md:w-10" />
+                  }
+                  {
+                    currUser.username &&
+                    <span className=" mx-4 hidden capitalize text-zinc-600 text-xl font-[500] lg:inline-block">
+                      {currUser?.username.slice(0, 20)}{currUser.username.length > 20 ? '...' : ''}
+                    </span>
+                  }
+                </>
+              ) :
                 <UserCircleIcon className="mx-2 h-8 w-8 text-zinc-600 md:h-10 md:w-10" />
             }
-            {
-              currUser?.username &&
-              <span className=" mx-4 hidden capitalize text-zinc-600 text-xl font-[500] lg:inline-block">
-                {currUser?.username.slice(0, 20)}{currUser?.username.length > 20 ? '...' : ''}
-              </span>
-            }
-
           </div>
+
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content className="bg-slate-200 min-w-[10rem] text-gray-800 font-poppins font-semibold">
+
+        <DropdownMenu.Content className="bg-slate-100 backdrop-blur-sm min-w-[10rem] text-gray-800 font-poppins font-semibold">
           {
             currUser &&
             <DropdownMenu.Item className="text-xl p-2">

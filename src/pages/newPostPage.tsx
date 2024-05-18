@@ -279,7 +279,7 @@ function NewPostPage() {
       </div>
 
 
-      <div className="sideContainer lg:bg-slate-200 flex flex-col items-center justify-center">
+      <div className="sideContainer lg:bg-slate-100 flex flex-col items-center justify-center">
         {/* <img src="/assets/icons/avatar.svg" alt="avatar" /> */}
 
         <div className="smallImages relative flex items-center sm:justify-center w-[300px] sm:w-[300px] h-[200px] sm:h-[250px]">

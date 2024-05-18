@@ -1,6 +1,6 @@
 import "../styles/pages/estatePage.scss";
 
-import { MapIcon } from "@heroicons/react/24/outline";
+import { MapIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Map, Slider } from "../components";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import DOMPurify from 'dompurify';
@@ -64,7 +64,19 @@ export default function EstatePage() {
 
               <Tooltip className="text-2xl" content={estate.user.username.slice(0, 30)}>
                 <div className="user w-fit min-w-36 bg-gradient-radial from-blue-800 px-3 py-5 sm:px-5">
-                  <img src={estate.user.avatar} alt={estate.user.username} />
+                  {
+                    estate.user.avatar ? (
+                      <>
+                        {(!estate.user.avatar.includes('<svg')) &&
+                          <img src={estate.user.avatar} className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                        }
+                        {(estate.user.avatar.includes('<svg')) &&
+                          <div className=" w-12 h-12" dangerouslySetInnerHTML={{ __html: estate.user.avatar as string }} />
+                        }
+                      </>
+                    ) :
+                      <UserCircleIcon className="mx-2 h-12 w-12 text-zinc-600 md:h-10 md:w-10" />
+                  }
                   <span>{estate.user.username.slice(0, 15)}</span>
                 </div>
               </Tooltip>
@@ -76,11 +88,11 @@ export default function EstatePage() {
         </div>
       </div>
 
-      <div className="features no-scrollbar mb-10 rounded-xl sm:bg-gray-200 lg:rounded-none">
+      <div className="features no-scrollbar mb-10 rounded-xl sm:bg-slate-100 lg:rounded-none">
         <div className="wrapper py-[10px] sm:px-[20px]">
           <div>
             <p className="title">General</p>
-            <div className="listVertical rounded-xl bg-gradient-to-r from-rose-100  to-lime-200 p-2 shadow-lg shadow-gray-300 md:p-3">
+            <div className="listVertical rounded-xl bg-gradient-to-br from-indigo-200 to-zinc-200 p-2 shadow-lg shadow-gray-300 md:p-3">
               <div className="feature">
                 <img src="/assets/icons/utility.png" alt="utility" />
                 <div className="featureText">
@@ -109,7 +121,7 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Room Sizes</p>
-            <div className="listHorizontal flex flex-col sm:flex-row gap-3 justify-around rounded-xl bg-gradient-to-r from-blue-200 to-stone-200 p-2 shadow-lg shadow-gray-300 md:p-3">
+            <div className="listHorizontal flex flex-col sm:flex-row gap-3 justify-around rounded-xl bg-gradient-to-r from-blue-100 to-stone-200 p-2 shadow-lg shadow-gray-300 md:p-3">
               <div className="size">
                 <img src="/assets/icons/size.png" alt="size" />
                 <span>{estate.postdetail.size} sqft</span>
@@ -139,7 +151,7 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Nearby Places</p>
-            <div className="places flex flex-col justify-around gap-3 rounded-xl bg-gradient-to-r from-lime-200 to-indigo-200 p-2 shadow-lg shadow-gray-300 sm:flex-row md:p-3 lg:flex-col xl:flex-row">
+            <div className="places flex flex-col justify-around gap-3 rounded-xl bg-gradient-to-br from-gray-200 to-teal-100 p-2 shadow-lg shadow-gray-300 sm:flex-row md:p-3 lg:flex-col xl:flex-row">
               <div className="place flex flex-row items-center gap-3">
                 <img src="/assets/icons/school.png" alt="school" />
                 <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">

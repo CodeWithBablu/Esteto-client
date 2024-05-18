@@ -1,6 +1,6 @@
-import { SubmitHandler, useForm } from "react-hook-form";
 import "../styles/pages/auth.scss";
-
+import { SubmitHandler, useForm } from "react-hook-form";
+import multiavatar from '@multiavatar/multiavatar/esm'
 import { Link, useNavigate } from "react-router-dom";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
@@ -16,6 +16,7 @@ interface IFormInput {
   username: string;
   email: string;
   password: string;
+  avatar?: string;
 }
 
 function RegisterPage() {
@@ -33,6 +34,8 @@ function RegisterPage() {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     data = { ...data, username: data.username.toLowerCase(), email: data.email.toLowerCase() };
+    data.avatar = multiavatar(data.username);
+
     setError("");
     setIsLoading(true);
     try {
@@ -92,7 +95,7 @@ function RegisterPage() {
 
       </div>
 
-      <div className="imgContainer relative hidden lg:bg-slate-200 md:block">
+      <div className="imgContainer relative hidden lg:bg-slate-100 md:block">
         <div className="absolute left-10 top-[6%] h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-cyan-500/40 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
         <div className="animation-delay-7000 absolute left-0 top-[20%] h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-pink-500/40 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
 

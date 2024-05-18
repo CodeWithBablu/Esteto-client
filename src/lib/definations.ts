@@ -59,3 +59,20 @@ export interface EstateRaw {
   user: string;
   postdetail: string;
 }
+
+export interface ChatType {
+  _id: string;
+  messages: string[];
+  participants: UserType[];
+  post: string;
+  seenBy: string[];
+  latestMessage: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MessageType {
+  chatId: string;
+  text: string;
+  sender: string;
+}

@@ -1,4 +1,4 @@
-export type { Estate, EstateRaw, UserType } from "./definations";
+export type { Estate, EstateRaw, UserType, ChatType } from "./definations";
 
 export { listData } from "./dummyData";
 export { errorHandler } from "./errorHandler";

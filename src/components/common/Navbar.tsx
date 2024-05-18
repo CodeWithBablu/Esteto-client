@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
 import "../../styles/ui/navbar.scss";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useLocation } from "react-router-dom";
 import clsx from "clsx";
@@ -7,12 +7,41 @@ import Chat from "../Profile/Chat";
 import Menu from "./Menu";
 import { UserType } from "@/lib";
 import { AuthContext } from "@/context/AuthContext";
+import axios from "axios";
 
 export default function Navbar() {
+  const refs = useRef({
+    chatRef: null as HTMLDivElement | null,
+    chatTriggerRef: null as HTMLDivElement | null,
+  });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chats, setChats] = useState([]);
   const { currUser } = useContext(AuthContext) as { currUser: UserType | null };
 
+  useEffect(() => {
+
+    document.addEventListener("mousedown", handler);
+    if (isChatOpen)
+      fetchChats();
+
+    return () => {
+      document.removeEventListener('mousedown', handler);
+    };
+  }, [isChatOpen])
+
+  function handler(e: MouseEvent) {
+    if (refs.current.chatRef && refs.current.chatTriggerRef)
+      if (!refs.current.chatTriggerRef.contains(e.target as Node) && !refs.current.chatRef.contains(e.target as Node)) {
+        setIsChatOpen(false);
+      }
+  }
+
+  async function fetchChats() {
+    const res = await axios.get('api/chat/');
+    // console.log(res.data.value);
+    setChats(res.data.value);
+  }
 
   const location = useLocation();
 
@@ -55,16 +84,15 @@ export default function Navbar() {
       </div>
 
       <div
-        className={clsx(`right bg-slate-200 text-[20px] font-medium`, {
+        className={clsx(`right bg-slate-100 text-[20px] font-medium`, {
           "bg-transparent": location.pathname === "/profile",
         })}
       >
         {currUser ? (
           <>
             <Menu />
-            <div className="relative cursor-pointer">
+            <div ref={(el) => (refs.current.chatTriggerRef = el)} onClick={() => setIsChatOpen(prev => !prev)} className="relative cursor-pointer">
               <img
-                onClick={() => setIsChatOpen((prev) => !prev)}
                 src="/assets/icons/message3.png"
                 alt="message"
                 className="relative mx-4 h-8 w-8 md:mx-4 md:h-10 md:w-10"
@@ -86,7 +114,7 @@ export default function Navbar() {
         )}
 
         <Bars3Icon
-          onClick={() => setIsMenuOpen((prev) => !prev)}
+          onClick={() => setIsMenuOpen(prev => !prev)}
           className={`z-30 inline w-8 cursor-pointer lg:hidden lg:w-10 ${isMenuOpen ? 'text-gray-200' : 'text-zinc-800'}`}
         />
 
@@ -113,15 +141,15 @@ export default function Navbar() {
                 <a href="/login">Sign in</a>
                 <a href="/register">Sign up</a>
               </>
-
           }
-
         </div>
 
 
       </div>
 
-      <Chat isOpen={isChatOpen} />
+      <div ref={(el) => { refs.current.chatRef = el }}>
+        <Chat isOpen={isChatOpen} chats={chats} currUser={currUser} />
+      </div>
     </nav >
   );
 }

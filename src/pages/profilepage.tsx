@@ -2,7 +2,7 @@ import "../styles/pages/profilePage.scss";
 import { Await, Link, useLoaderData } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import { Suspense, useContext } from "react";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { CardSkeleton, List } from "../components";
 import { EstateRaw, UserType } from "@/lib";
 
@@ -25,11 +25,25 @@ export default function ProfilePage() {
 
           <div className="info flex items-center flex-col w-full gap-5 rounded-xl py-3 sm:py-10 xs:flex-row xs:gap-10">
             <div>
-              <img
-                src="https://images.pexels.com/photos/6256894/pexels-photo-6256894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                alt="profileimg"
-                className="h-16 w-16 sm:h-24 sm:w-24 rounded-full object-cover"
-              />
+              {
+                currUser ? (<>
+                  {
+                    currUser.avatar && (
+                      <>
+                        {(!currUser.avatar.includes('<svg')) &&
+                          <img src={currUser.avatar} className="h-20 w-20 rounded-full object-cover" alt="avatar" />
+                        }
+                        {(currUser.avatar.includes('<svg')) &&
+                          <div className=" w-20 h-20" dangerouslySetInnerHTML={{ __html: currUser?.avatar as string }} />
+                        }
+                      </>
+                    )
+                  }
+                </>) : (
+                  <UserCircleIcon className="mx-2 h-8 w-8 text-zinc-600 md:h-10 md:w-10" />
+                )
+              }
+
             </div>
 
             <div className="flex flex-col gap-2">

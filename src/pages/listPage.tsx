@@ -29,7 +29,7 @@ export default function ListPage() {
         </div>
       </div>
 
-      <div className="mapContainer relative hidden bg-gray-200 lg:block">
+      <div className="mapContainer relative hidden bg-slate-100 lg:block">
         <div className=" h-full w-full overflow-hidden rounded-t-2xl">
           <Suspense fallback={<MapSkeleton />}>
             <Await

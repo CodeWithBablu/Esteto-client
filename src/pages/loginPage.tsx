@@ -90,7 +90,7 @@ function LoginPage() {
 
       </div>
 
-      <div className="imgContainer relative hidden lg:bg-slate-200 md:block">
+      <div className="imgContainer relative hidden lg:bg-slate-100 md:block">
         <div className="absolute left-10 top-[6%] h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-cyan-500/40 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
         <div className="animation-delay-7000 absolute left-0 top-[20%] h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-pink-500/40 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
 
