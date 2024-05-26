@@ -75,4 +75,5 @@ export interface MessageType {
   chatId: string;
   text: string;
   sender: string;
+  createdAt: string;
 }

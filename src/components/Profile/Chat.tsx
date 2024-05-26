@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { ChatType, UserType } from "@/lib";
+import { ChatType, UserType, errorHandler, toastMessage, useNotificationStore } from "@/lib";
 import Message from "./Message";
+import axios, { AxiosError } from "axios";
+import { SocketContext } from "@/context/SocketContext";
+import { Socket } from "socket.io-client";
 
-export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, chats: ChatType[] | [], currUser: UserType | null }) {
+export default function Chat({ isOpen, isChatOpen, currUser }: { isOpen: boolean, isChatOpen: boolean, currUser: UserType | null }) {
 
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [chatInfo, setChatInfo] = useState<{ sender: string, receiver: UserType | null, chatId: string }>({
@@ -13,7 +16,52 @@ export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, cha
     chatId: "",
   });
 
-  const handleClick = (sender: string, receiver: UserType | null, chatId: string) => {
+  const [chats, setChats] = useState<ChatType[]>([]);
+  const { socket } = useContext(SocketContext) as { socket: Socket };
+  const { fetch } = useNotificationStore((state) => ({ count: state.count, fetch: state.fetch }));
+
+  useEffect(() => {
+
+    if (socket) {
+      socket.on("getMessage", () => {
+        fetch();
+        if (!isMessageOpen)
+          fetchChats();
+      })
+    }
+
+    if (isChatOpen)
+      fetchChats();
+
+    return () => {
+      if (socket)
+        socket.off("getMessage");
+    }
+  }, [isChatOpen, isMessageOpen, socket, fetch]);
+
+  async function fetchChats() {
+    try {
+      const res = await axios.get('api/chat/');
+      setChats(res.data.value);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toastMessage("error", error.response?.data.message, 5000);
+      }
+      else
+        toastMessage("error", errorHandler(error, "Failed to sent message") as string, 5000);
+    }
+  }
+
+  const handleClick = (sender: string, receiver: UserType | null, chatId: string, seenBy: string[]) => {
+    if (!seenBy.includes(sender)) {
+      const updatedChats = chats.map((chat) => {
+        if (chat._id === chatId) {
+          chat.seenBy.push(sender);
+        }
+        return chat
+      })
+      setChats(updatedChats);
+    }
     setChatInfo({
       sender,
       receiver,
@@ -25,7 +73,7 @@ export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, cha
   return (
     <div
       className={clsx(
-        "absolute left-0 top-[70px] flex h-[calc(100dvh-70px)] sm:h-[calc(100dvh-80px)] w-full max-w-[640px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:rounded-2xl",
+        "absolute left-0 top-[70px] flex h-[calc(100dvh-70px)] sm:h-[calc(100dvh-80px)] w-full max-w-[600px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:rounded-2xl",
         {
           "translate-x-0": isOpen,
           "translate-x-[calc(100%+2.5rem)]": !isOpen,
@@ -37,7 +85,7 @@ export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, cha
           {/* //// contactContainer started */}
           <div
             className={clsx(
-              "contactContainer relative h-full w-full shrink-0 transition-all duration-500 ease-linear",
+              "contactContainer sticky top-0 h-full w-full shrink-0 transition-all duration-500 ease-linear",
               { "blur-sm": isMessageOpen },
             )}
           >
@@ -88,12 +136,13 @@ export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, cha
                   const receiver = chat.participants.filter((user) => user._id !== currUser._id)[0] as UserType;
                   return (
                     <div
-                      onClick={() => handleClick(currUser._id as string, receiver, chat._id)}
+                      onClick={() => handleClick(currUser._id as string, receiver, chat._id, chat.seenBy)}
                       key={index}
                       className={clsx(
-                        'user relative flex cursor-pointer items-center gap-5 border-b border-zinc-600 py-3 sm:gap-8',
+                        'user relative flex cursor-pointer items-center gap-5 border-b py-3 sm:gap-8',
                         {
-                          'border-pink-600': !chat.seenBy.includes(currUser._id) && chat.messages.length > 0
+                          'border-pink-600': !chat.seenBy.includes(currUser._id) && chat.messages.length > 0,
+                          'border-zinc-600': chat.seenBy.includes(currUser._id) || chat.messages.length === 0,
                         }
                       )}
                     >
@@ -113,9 +162,17 @@ export default function Chat({ isOpen, chats, currUser }: { isOpen: boolean, cha
                       }
 
                       <div>
-                        <h2 className="text-[16px] sm:text-[18px] font-medium text-gray-50">{receiver.username}</h2>
-                        <span className="text-gray-300/70 text-[14px] sm:text-[16px]">
-                          {chat.latestMessage ? chat.latestMessage : 'Hey! I am on esteto'}
+                        <h2 className="text-[16px] sm:text-[18px] font-chillax font-medium text-gray-50">{receiver.username}</h2>
+                        <span className={clsx(
+                          'font-chillax text-[14px] font-medium sm:text-[16px]',
+                          {
+                            'text-pink-500': !chat.seenBy.includes(currUser._id) && chat.messages.length > 0,
+                            'text-gray-300': chat.seenBy.includes(currUser._id) || chat.messages.length === 0,
+                          }
+
+                        )}>
+                          {chat.latestMessage && (chat.latestMessage.length > 25 ? chat.latestMessage.slice(0, 40) + '...' : chat.latestMessage)}
+                          {!chat.latestMessage && 'Hey! I am on esteto'}
                         </span>
                       </div>
 

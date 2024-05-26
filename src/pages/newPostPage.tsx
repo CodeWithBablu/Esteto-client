@@ -1,14 +1,15 @@
 import "@/styles/pages/newPostPage.scss";
 import "react-quill/dist/quill.snow.css";
-import { UploadWidget } from "@/components";
+import { AddressModal, UploadWidget } from "@/components";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ChevronDoubleUpIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import axios, { AxiosError } from "axios";
-import { errorHandler, toastMessage } from "@/lib";
-import { useState } from "react";
+import { UserType, errorHandler, toastMessage } from "@/lib";
+import { useContext, useEffect, useState } from "react";
 import clsx from "clsx";
+import { AuthContext } from "@/context/AuthContext";
 
 const Loader = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
   <path d="M3.05469 13H5.07065C5.55588 16.3923 8.47329 19 11.9998 19C15.5262 19 18.4436 16.3923 18.9289 13H20.9448C20.4474 17.5 16.6323 21 11.9998 21C7.36721 21 3.55213 17.5 3.05469 13ZM3.05469 11C3.55213 6.50005 7.36721 3 11.9998 3C16.6323 3 20.4474 6.50005 20.9448 11H18.9289C18.4436 7.60771 15.5262 5 11.9998 5C8.47329 5 5.55588 7.60771 5.07065 11H3.05469Z"></path>
@@ -43,6 +44,16 @@ function NewPostPage() {
   const [desc, setDesc] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userLocation, setUserLocation] = useState<{ latitude: number, longitude: number } | null>(null);
+
+  const [viewport, setViewPort] = useState({
+    latitude: 54.5260,
+    longitude: 15.2551,
+    zoom: 8,
+  });
+
+
+  const { currUser } = useContext(AuthContext) as { currUser: UserType }
 
   const navigate = useNavigate();
   const {
@@ -50,6 +61,25 @@ function NewPostPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInput>();
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
+          setViewPort((prev) => ({
+            ...prev,
+            latitude,
+            longitude,
+          }));
+        },
+        (error) => {
+          console.error('Error getting user location:', error);
+        }
+      );
+    }
+  }, []);
 
 
   const onclick = () => {
@@ -143,12 +173,14 @@ function NewPostPage() {
                 id="price" name="price" type="number" placeholder="price" autoComplete="price" />
             </div>
 
-            <div className="item">
+            {/* <div className="item">
               <label htmlFor="address">Address <span className="text-rose-500">*</span></label>
               <input {...register("address", { required: "address required. max: 50", maxLength: 50 })}
                 aria-invalid={errors.address ? "true" : "false"} maxLength={50}
                 id="address" name="address" type="text" placeholder="address" autoComplete="address" />
-            </div>
+            </div> */}
+
+            {currUser && <AddressModal currUser={currUser} userLocation={userLocation} setUserLocation={setUserLocation} viewport={viewport} setViewPort={setViewPort} />}
 
             <div className="item description">
               <label htmlFor="desc">Description <span className="text-rose-500">*</span></label>
