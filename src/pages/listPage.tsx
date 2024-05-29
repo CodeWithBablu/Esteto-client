@@ -14,16 +14,23 @@ export default function ListPage() {
       <div className="listContainer">
         <div className="wrapper no-scrollbar flex h-full flex-col justify-start gap-3 pt-10 sm:gap-10">
           <Filter />
-          <Suspense fallback={<><CardSkeleton /><CardSkeleton /></>}>
+          <Suspense
+            fallback={
+              <>
+                <CardSkeleton />
+                <CardSkeleton />
+              </>
+            }
+          >
             <Await
               resolve={res.posts}
               errorElement={<p>Error loading posts!</p>}
             >
-              {(postResponse: { data: { value: EstateRaw[] } }) => (
+              {(postResponse: { data: { value: EstateRaw[] } }) =>
                 postResponse.data.value.map((estate) => (
                   <Card key={estate._id} item={estate} btnDisabled={false} />
                 ))
-              )}
+              }
             </Await>
           </Suspense>
         </div>

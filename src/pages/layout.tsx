@@ -16,33 +16,33 @@ export function Layout() {
         <div className="content">
           <Outlet />
         </div>
-      </div >
+      </div>
       {/* <ThemePanel /> */}
     </Theme>
   );
 }
 
 export function RequireAuth() {
-  const { currUser } = useContext(AuthContext) as { currUser: UserType | null, updateUser: (data: UserType | null) => void };
+  const { currUser } = useContext(AuthContext) as {
+    currUser: UserType | null;
+    updateUser: (data: UserType | null) => void;
+  };
 
+  if (!currUser) <Navigate to={"/login"} />;
 
-  if (!currUser) <Navigate to={"/login"} />
-
-  return (
-    currUser ? (
-      <Theme>
-        <div className="layout">
-          <Navbar />
-          {/* <Toaster /> */}
-          <div className="content">
-            <Outlet />
-          </div>
-        </div >
-        {/* <ThemePanel /> */}
-      </Theme>
-    ) : (
-      <Navigate to={"/login"} />
-    )
+  return currUser ? (
+    <Theme>
+      <div className="layout">
+        <Navbar />
+        {/* <Toaster /> */}
+        <div className="content">
+          <Outlet />
+        </div>
+      </div>
+      {/* <ThemePanel /> */}
+    </Theme>
+  ) : (
+    <Navigate to={"/login"} />
   );
 }
 

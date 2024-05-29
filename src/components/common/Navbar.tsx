@@ -16,21 +16,26 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { currUser } = useContext(AuthContext) as { currUser: UserType | null };
-  const { count, fetch } = useNotificationStore((state) => ({ count: state.count, fetch: state.fetch }));
+  const { count, fetch } = useNotificationStore((state) => ({
+    count: state.count,
+    fetch: state.fetch,
+  }));
 
   useEffect(() => {
     document.addEventListener("mousedown", handler);
-    if (currUser)
-      fetch();
-    console.log("inside useEffect")
+    if (currUser) fetch();
+
     return () => {
-      document.removeEventListener('mousedown', handler);
+      document.removeEventListener("mousedown", handler);
     };
   }, [fetch, currUser]);
 
   function handler(e: MouseEvent) {
     if (refs.current.chatRef && refs.current.chatTriggerRef)
-      if (!refs.current.chatTriggerRef.contains(e.target as Node) && !refs.current.chatRef.contains(e.target as Node)) {
+      if (
+        !refs.current.chatTriggerRef.contains(e.target as Node) &&
+        !refs.current.chatRef.contains(e.target as Node)
+      ) {
         setIsChatOpen(false);
       }
   }
@@ -56,7 +61,7 @@ export default function Navbar() {
 
             <a
               href="/"
-              className=" relative flex w-fit shrink-0 items-center md:w-12 lg:w-fit bg-transparent"
+              className=" relative flex w-fit shrink-0 items-center bg-transparent md:w-12 lg:w-fit"
             >
               <img
                 className="h-10 w-10 -rotate-90 rounded-full lg:h-12 lg:w-12"
@@ -86,19 +91,25 @@ export default function Navbar() {
           {currUser ? (
             <>
               <Menu />
-              <div ref={(el) => (refs.current.chatTriggerRef = el)} onClick={() => setIsChatOpen(prev => !prev)} className="relative cursor-pointer">
+              <div
+                ref={(el) => (refs.current.chatTriggerRef = el)}
+                onClick={() => setIsChatOpen((prev) => !prev)}
+                className="relative cursor-pointer"
+              >
                 <img
                   src="/assets/icons/message3.png"
                   alt="message"
                   className="relative mx-4 h-8 w-8 md:mx-4 md:h-10 md:w-10"
                 />
-                <div className={clsx(
-                  'absolute right-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/3 items-center justify-center rounded-full bg-rose-600 text-sm font-medium text-gray-100',
-                  {
-                    'hidden': count === 0,
-                    'inline-block': count > 0,
-                  }
-                )}>
+                <div
+                  className={clsx(
+                    "absolute right-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/3 items-center justify-center rounded-full bg-rose-600 text-sm font-medium text-gray-100",
+                    {
+                      hidden: count === 0,
+                      "inline-block": count > 0,
+                    },
+                  )}
+                >
                   {count}
                 </div>
               </div>
@@ -108,48 +119,55 @@ export default function Navbar() {
               <a href="/login" className="mx-4 text-zinc-800">
                 Sign in
               </a>
-              <a href="/register" className="mx-4 bg-blue-500 px-6 py-3 text-gray-50">
+              <a
+                href="/register"
+                className="mx-4 bg-blue-500 px-6 py-3 text-gray-50"
+              >
                 Sign up
               </a>
             </>
           )}
 
           <Bars3Icon
-            onClick={() => setIsMenuOpen(prev => !prev)}
-            className={`z-30 inline w-8 cursor-pointer lg:hidden lg:w-10 ${isMenuOpen ? 'text-gray-200' : 'text-zinc-800'}`}
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className={`z-30 inline w-8 cursor-pointer lg:hidden lg:w-10 ${isMenuOpen ? "text-gray-200" : "text-zinc-800"}`}
           />
 
           <div
             className={clsx(
               `z-10 flex flex-col items-center justify-center gap-5 text-2xl font-semibold text-slate-200`,
               {
-                'menu active': isMenuOpen,
-                'menu': !isMenuOpen
-              }
+                "menu active": isMenuOpen,
+                menu: !isMenuOpen,
+              },
             )}
           >
             <a href="/">Home</a>
             <a href="/">About</a>
             <a href="/">Contact</a>
             <a href="/">Agents</a>
-            {
-              currUser ?
-                <>
-                  <a href="/profile">Profile</a>
-                  <a className="mt-5 text-red-500" href="/profile">Logout</a>
-                </> :
-                <>
-                  <a href="/login">Sign in</a>
-                  <a href="/register">Sign up</a>
-                </>
-            }
+            {currUser ? (
+              <>
+                <a href="/profile">Profile</a>
+                <a className="mt-5 text-red-500" href="/profile">
+                  Logout
+                </a>
+              </>
+            ) : (
+              <>
+                <a href="/login">Sign in</a>
+                <a href="/register">Sign up</a>
+              </>
+            )}
           </div>
-
-
         </div>
-
-      </nav >
-      <div className="z-30" ref={(el) => { refs.current.chatRef = el }}>
+      </nav>
+      <div
+        className="z-30"
+        ref={(el) => {
+          refs.current.chatRef = el;
+        }}
+      >
         <Chat isOpen={isChatOpen} isChatOpen={isChatOpen} currUser={currUser} />
       </div>
     </>

@@ -8,7 +8,10 @@ interface UwConfigType {
 interface Cloudinary {
   createUploadWidget: (
     config: UwConfigType,
-    callback: (error: UploadApiErrorResponse | null, result: UploadApiResponse | null) => void
+    callback: (
+      error: UploadApiErrorResponse | null,
+      result: UploadApiResponse | null,
+    ) => void,
   ) => { open: () => void };
 }
 declare global {
@@ -19,7 +22,13 @@ declare global {
 
 // Create a context to manage the script loading state
 
-function UploadWidget({ uwConfig, setState }: { uwConfig: UwConfigType, setState: React.Dispatch<React.SetStateAction<string[]>> }) {
+function UploadWidget({
+  uwConfig,
+  setState,
+}: {
+  uwConfig: UwConfigType;
+  setState: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -43,15 +52,12 @@ function UploadWidget({ uwConfig, setState }: { uwConfig: UwConfigType, setState
 
   function initializeCloudinaryWidget() {
     if (loaded) {
-      return window.cloudinary.createUploadWidget(
-        uwConfig,
-        (error, result) => {
-          if (!error && result && result.event === "success") {
-            console.log("Done! Here is the image info: ", result.info);
-            setState(prev => [...prev, result.info.secure_url as string]);
-          }
+      return window.cloudinary.createUploadWidget(uwConfig, (error, result) => {
+        if (!error && result && result.event === "success") {
+          console.log("Done! Here is the image info: ", result.info);
+          setState((prev) => [...prev, result.info.secure_url as string]);
         }
-      );
+      });
     }
   }
 
@@ -59,14 +65,13 @@ function UploadWidget({ uwConfig, setState }: { uwConfig: UwConfigType, setState
     e.preventDefault();
     const widget = initializeCloudinaryWidget();
     widget?.open();
-  }
+  };
 
   return (
     <button
       id="upload_widget"
-      className={
-        `bg-indigo-600 px-6 py-2 font-medium font-poppins rounded-md mt-5 text-gray-100 
-        ${loaded ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}
+      className={`mt-5 rounded-md z-30 bg-indigo-600 px-6 py-2 font-poppins font-medium text-gray-100 
+        ${loaded ? "opacity-100" : "pointer-events-none opacity-50"}`}
       disabled={!loaded}
       onClick={handleClick}
     >

@@ -17,18 +17,18 @@ export interface Estate {
   bathroom: number;
   latitude: string;
   longitude: string;
-  type: 'buy' | 'rent';
-  property: 'apartment' | 'house' | 'condo' | 'land';
+  type: "buy" | "rent";
+  property: "apartment" | "house" | "condo" | "land";
   createdAt?: string;
   updatedAt?: string;
   isSaved?: boolean;
   user: {
-    _id: string,
-    username: string,
-    avatar: string,
-  },
+    _id: string;
+    username: string;
+    avatar: string;
+  };
   postdetail: {
-    _id: string,
+    _id: string;
     desc: string;
     utilities: string;
     pet: string;
@@ -37,7 +37,7 @@ export interface Estate {
     school: number;
     bus: number;
     restaurant: number;
-  }
+  };
 }
 
 export interface EstateRaw {
@@ -51,8 +51,8 @@ export interface EstateRaw {
   bathroom: number;
   latitude: string;
   longitude: string;
-  type: 'buy' | 'rent';
-  property: 'apartment' | 'house' | 'condo' | 'land';
+  type: "buy" | "rent";
+  property: "apartment" | "house" | "condo" | "land";
   createdAt?: string;
   updatedAt?: string;
   isSaved?: boolean;

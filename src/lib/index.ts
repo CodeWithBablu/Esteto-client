@@ -6,3 +6,4 @@ export { toastMessage } from "./toastMessage";
 export { formatCurrency } from "./formatCurrency";
 export { singlePageLoader, listPageLoader } from "./loaders";
 export { useNotificationStore } from "./notificationStore";
+export { useCoordinateStore } from "./coordinateStore";

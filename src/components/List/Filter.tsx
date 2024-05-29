@@ -7,7 +7,6 @@ import { Link, useSearchParams } from "react-router-dom";
 export default function Filter() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-
   const [query, setQuery] = useState({
     city: searchParams.get("city") || "",
     type: searchParams.get("type") || "",
@@ -17,20 +16,22 @@ export default function Filter() {
     maxPrice: searchParams.get("maxPrice") || "1000000",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setQuery(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    setQuery((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     console.log(query);
-  }
+  };
 
   return (
     <div className="filter">
       <h1 className=" text-2xl font-light">
-        Search results for <b className="font-semibold">{searchParams.get("city")}</b>
+        Search results for{" "}
+        <b className="font-semibold">{searchParams.get("city")}</b>
       </h1>
 
       <form>
         <div className="top">
-
           <div className="item flex-1">
             <label htmlFor="city">City</label>
             <input
@@ -45,7 +46,12 @@ export default function Filter() {
 
           <div className="item flex-1">
             <label htmlFor="type">Type</label>
-            <select onChange={handleChange} defaultValue={query.type} name="type" id="type">
+            <select
+              onChange={handleChange}
+              defaultValue={query.type}
+              name="type"
+              id="type"
+            >
               <option value="">any</option>
               <option value="buy">Buy</option>
               <option value="rent">Rent</option>
@@ -54,10 +60,14 @@ export default function Filter() {
         </div>
 
         <div className="bottom grid grid-flow-row grid-cols-2 gap-x-2 gap-y-5 md:grid-cols-4 md:gap-y-0">
-
           <div className="item">
             <label htmlFor="property">Property</label>
-            <select onChange={handleChange} defaultValue={query.property} name="property" id="property">
+            <select
+              onChange={handleChange}
+              defaultValue={query.property}
+              name="property"
+              id="property"
+            >
               <option value="">any</option>
               <option value="apartment">Apartment</option>
               <option value="house">House</option>
@@ -109,11 +119,13 @@ export default function Filter() {
           </div>
         </div>
 
-        <Link to={`/list?city=${query.city}&type=${query.type}&property=${query.property}&bedroom=${query.bedroom}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`} className="flex mt-5 h-14 px-6 min-w-[100px] flex-grow cursor-pointer items-center justify-center gap-5 rounded-md border-none bg-blue-600 text-xl text-gray-100">
+        <Link
+          to={`/list?city=${query.city}&type=${query.type}&property=${query.property}&bedroom=${query.bedroom}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`}
+          className="mt-5 flex h-14 min-w-[100px] flex-grow cursor-pointer items-center justify-center gap-5 rounded-md border-none bg-blue-600 px-6 text-xl text-gray-100"
+        >
           <MagnifyingGlassIcon className="inline-block h-6 w-6" />
           <span className="inline-block">Search</span>
-        </Link >
-
+        </Link>
       </form>
     </div>
   );

@@ -60,48 +60,56 @@ export default function Slider({ images }: { images: string[] }) {
         </div>
       )}
 
-      <div className={clsx(
-        'bigImage',
-        { 'flex-[3]': images.length > 1 },
-        { 'flex-[1]': images.length == 1 },
-      )}>
+      <div
+        className={clsx(
+          "bigImage",
+          { "flex-[3]": images.length > 1 },
+          { "flex-[1]": images.length == 1 },
+        )}
+      >
         <img src={images[0]} alt="preview" onClick={() => setCurrImage(0)} />
       </div>
 
-      {images.length > 1 && <div className={clsx(`smallImages relative flex h-full items-center sm:justify-center flex-1`)}>
+      {images.length > 1 && (
         <div
           className={clsx(
-            "no-scrollbar relative flex flex-row gap-5 overflow-scroll sm:flex-col",
-            {
-              "w-[90%] sm:h-80 sm:w-full": images.length > 4,
-              "w-[90%] sm:w-full md:h-full": images && images.length <= 4,
-            },
+            `smallImages relative flex h-full flex-1 items-center sm:justify-center`,
           )}
         >
-          {images.slice(1).map((image, index) => (
-            <img
-              className="w- h-[50px] sm:min-w-[150px]"
-              key={index}
-              src={image}
-              alt="preview"
-              onClick={() => setCurrImage(index + 1)}
-            />
-          ))}
-        </div>
+          <div
+            className={clsx(
+              "no-scrollbar relative flex flex-row gap-5 overflow-scroll sm:flex-col",
+              {
+                "w-[90%] sm:h-80 sm:w-full": images.length > 4,
+                "w-[90%] sm:w-full md:h-full": images && images.length <= 4,
+              },
+            )}
+          >
+            {images.slice(1).map((image, index) => (
+              <img
+                className="w- h-[50px] sm:min-w-[150px]"
+                key={index}
+                src={image}
+                alt="preview"
+                onClick={() => setCurrImage(index + 1)}
+              />
+            ))}
+          </div>
 
-        <div
-          className={clsx(
-            "absolute right-0 flex w-20 rotate-90 items-center justify-center gap-3  rounded-md bg-gradient-radial from-blue-600 p-2 font-semibold text-gray-200 backdrop-blur-2xl sm:bottom-0 sm:right-auto sm:w-fit sm:rotate-0",
-            {
-              hidden: images.length <= 4,
-              block: images.length > 4,
-            },
-          )}
-        >
-          <ChevronDoubleUpIcon className="w-6 animate-bounce ease-linear" />
-          <span className="hidden sm:inline-block">scroll up</span>
+          <div
+            className={clsx(
+              "absolute right-0 flex w-20 rotate-90 items-center justify-center gap-3  rounded-md bg-gradient-radial from-blue-600 p-2 font-semibold text-gray-200 backdrop-blur-2xl sm:bottom-0 sm:right-auto sm:w-fit sm:rotate-0",
+              {
+                hidden: images.length <= 4,
+                block: images.length > 4,
+              },
+            )}
+          >
+            <ChevronDoubleUpIcon className="w-6 animate-bounce ease-linear" />
+            <span className="hidden sm:inline-block">scroll up</span>
+          </div>
         </div>
-      </div>}
+      )}
     </div>
   );
 }

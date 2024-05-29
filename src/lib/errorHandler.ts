@@ -6,4 +6,4 @@ export const errorHandler = (error: unknown, message: string) => {
   } else {
     return message;
   }
-}
+};

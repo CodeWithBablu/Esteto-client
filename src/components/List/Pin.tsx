@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 export default function Pin({ estate }: { estate: Estate | EstateRaw }) {
   console.log(estate);
   return (
-    <Marker position={[parseFloat(estate.latitude), parseFloat(estate.longitude)]}>
+    <Marker
+      position={[parseFloat(estate.latitude), parseFloat(estate.longitude)]}
+    >
       <Popup>
         <div className="popupContainer flex min-w-80 gap-5">
           <img

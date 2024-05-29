@@ -43,20 +43,28 @@
             padding: 10px;
             width: 100%;
             border-radius: 5px;
-            border: 1px solid #52525b;
+            border: 1px solid;
+            border-color: #a1a1aa;
+            outline: none;
+
+            &:focus {
+              border-color: #2563eb;
+            }
           }
 
           input.m-input {
-            padding-left: 40px;
-            width: 100%;
-            border-radius: 5px;
-            border: 1px solid #52525b;
+            padding-left: 50px;
           }
 
           select {
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #a1a1aa;
+            outline: none;
+
+            &:focus {
+              border-color: #2563eb;
+            }
           }
 
           &.description {

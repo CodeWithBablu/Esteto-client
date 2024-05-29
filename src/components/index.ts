@@ -1,4 +1,3 @@
-
 export { default as Navbar } from "./common/Navbar";
 export { default as Card } from "./common/Card";
 export { default as UploadWidget } from "./common/UploadWidget";
@@ -19,3 +18,4 @@ export { default as WarningSvg } from "./ui/WarningSvg";
 export { CardSkeleton, MapSkeleton, ChatSkeleton } from "./ui/skeletons";
 
 export { default as AddressModal } from "./Profile/AddressModal";
+export { default as PlaceModal } from "./common/PlaceModal";

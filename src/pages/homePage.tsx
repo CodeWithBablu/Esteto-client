@@ -6,14 +6,12 @@ export default function HomePage() {
     <div className="homePage font-poppins">
       <div className="textContainer">
         <div className="wrapper flex h-full flex-col justify-center gap-3 sm:gap-10">
-          <h1 className=" text-3xl font-medium md:text-6xl">
-            Find Real Estate & Get your dream place
+          <h1 className=" text-3xl font-semibold md:text-5xl font-chillax">
+            Seamless Property Search: Find Your Ideal Home in Minutes
           </h1>
 
           <p className="font-light">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam, ut
-            ducimus beatae quasi cupiditate molestiae ea quae consequuntur non.
-            Vero!
+            Access thousands of listings,Effortless Exploration and Discover the Perfect Property with Ease all in one place.
           </p>
 
           <Searchbar />
