@@ -3,15 +3,14 @@ import { Estate, EstateRaw } from "../../lib";
 import { Link } from "react-router-dom";
 
 export default function Pin({ estate }: { estate: Estate | EstateRaw }) {
-  console.log(estate);
   return (
     <Marker
       position={[parseFloat(estate.latitude), parseFloat(estate.longitude)]}
     >
       <Popup>
-        <div className="popupContainer flex min-w-80 gap-5">
+        <div className="popupContainer flex min-w-60 gap-5">
           <img
-            className=" h-[48px] w-[64px] rounded-md object-cover"
+            className=" h-[48px] w-[60px] rounded-md object-cover"
             src={estate.images[0]}
             alt={estate.title}
           />

@@ -1,8 +1,8 @@
 export const formatCurrency = (amount: number) => {
-  const usDollar = new Intl.NumberFormat("en-US", {
+  const inRupees = new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
   });
 
-  return usDollar.format(amount);
+  return inRupees.format(amount);
 };

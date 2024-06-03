@@ -59,6 +59,12 @@ body {
   animation-delay: 7s;
 }
 
+.remove-arrow::-webkit-inner-spin-button,
+.remove-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 @layer base {
   /* //chillax */
   @font-face {

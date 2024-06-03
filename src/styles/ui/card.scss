@@ -37,7 +37,8 @@
 
     .cardTitle {
       font-size: 20px;
-      font-weight: 600;
+      font-family: "chillax";
+      font-weight: 500;
       color: #4b5563;
       transition: all 0.4s ease;
 
@@ -86,9 +87,6 @@
       }
 
       .icons {
-        display: flex;
-        align-items: center;
-
         .icon {
           width: 40px;
           height: 40px;

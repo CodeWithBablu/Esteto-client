@@ -15,11 +15,9 @@ import { Socket } from "socket.io-client";
 
 export default function Chat({
   isOpen,
-  isChatOpen,
   currUser,
 }: {
   isOpen: boolean;
-  isChatOpen: boolean;
   currUser: UserType | null;
 }) {
   const [isMessageOpen, setIsMessageOpen] = useState(false);
@@ -35,22 +33,25 @@ export default function Chat({
 
   const [chats, setChats] = useState<ChatType[]>([]);
   const { socket } = useContext(SocketContext) as { socket: Socket };
-  const { fetch } = useNotificationStore();
+  const { fetch, dec } = useNotificationStore();
 
   useEffect(() => {
     if (socket) {
       socket.on("getMessage", () => {
-        fetch();
-        if (!isMessageOpen) fetchChats();
+
+        if (!isMessageOpen) {
+          fetch();
+          fetchChats()
+        }
       });
     }
 
-    if (isChatOpen) fetchChats();
+    if (isOpen) fetchChats();
 
     return () => {
       if (socket) socket.off("getMessage");
     };
-  }, [isChatOpen, isMessageOpen, socket, fetch]);
+  }, [isOpen, isMessageOpen, socket, fetch]);
 
   async function fetchChats() {
     try {
@@ -78,6 +79,7 @@ export default function Chat({
       const updatedChats = chats.map((chat) => {
         if (chat._id === chatId) {
           chat.seenBy.push(sender);
+          dec();
         }
         return chat;
       });
@@ -94,7 +96,7 @@ export default function Chat({
   return (
     <div
       className={clsx(
-        "absolute left-0 top-[70px] flex h-[calc(100dvh-70px)] w-full max-w-[600px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:h-[calc(100dvh-80px)] sm:rounded-2xl",
+        "absolute z-50 left-0 top-[70px] flex h-[calc(100dvh-70px)] w-full max-w-[600px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:h-[calc(100dvh-80px)] sm:rounded-2xl",
         {
           "translate-x-0": isOpen,
           "translate-x-[calc(100%+2.5rem)]": !isOpen,
@@ -106,7 +108,7 @@ export default function Chat({
           {/* //// contactContainer started */}
           <div
             className={clsx(
-              "contactContainer sticky top-0 h-full w-full shrink-0 transition-all duration-500 ease-linear",
+              "contactContainer z-40 sticky top-0 h-full w-full shrink-0 transition-all duration-500 ease-linear",
               { "blur-sm": isMessageOpen },
             )}
           >

@@ -1,4 +1,4 @@
-import { UserType, errorHandler, toastMessage } from "@/lib";
+import { UserType, errorHandler, formatLastSeen, toastMessage, useNotificationStore } from "@/lib";
 import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
@@ -31,22 +31,26 @@ export default function Message({
 }) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState("");
+  const [isOnline, setIsOnline] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { socket } = useContext(SocketContext) as { socket: Socket };
 
   const ref = useRef<HTMLTextAreaElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
+  const { dec } = useNotificationStore();
   const { sender, receiver, chatId } = chatInfo;
 
   useEffect(() => {
     const read = async () => {
       try {
         await axios.post(`api/chat/read/${chatId}`);
+
       } catch (error) {
         if (error instanceof AxiosError) {
           toastMessage("error", error.response?.data.message, 4000);
         } else toastMessage("error", "Failed to read message", 4000);
+
       }
     };
 
@@ -65,18 +69,21 @@ export default function Message({
     };
 
     if (socket) {
-      socket.on("getMessage", (data) => {
-        if (isMessageOpen && chatId === data.chatId)
+      socket.on("getMessage", async (data) => {
+        if (isMessageOpen && chatId === data.chatId) {
           setMessages((prev) => [...prev, data]);
-        read();
+          read();
+        }
       });
 
-      socket.on("userStatus", ({ online }) => {
-        // console.log(online);
+      socket.on("userStatus", ({ online }: { online: boolean }) => {
+        setIsOnline(online);
       });
 
-      if (isMessageOpen && receiver)
+      if (isMessageOpen && receiver) {
         socket.emit("getUserStatus", receiver._id as string);
+        console.log(formatLastSeen(receiver.lastSeenAt));
+      }
     }
 
     if (chatId && isMessageOpen) {
@@ -86,7 +93,7 @@ export default function Message({
     return () => {
       if (socket) socket.off("getMessage");
     };
-  }, [chatId, isMessageOpen, socket, receiver]);
+  }, [chatId, isMessageOpen, socket, receiver, dec]);
 
   useEffect(() => {
     if (messageEndRef.current && isMessageOpen) {
@@ -155,7 +162,7 @@ export default function Message({
   return (
     <div
       className={clsx(
-        "messageContainer absolute left-0 top-0 z-30 flex h-full w-full shrink-0 flex-col overflow-hidden bg-zinc-900/90 transition-all duration-300 ease-linear",
+        "messageContainer z-50 absolute left-0 top-0 flex h-full w-full shrink-0 flex-col overflow-hidden bg-zinc-900/90 transition-all duration-300 ease-linear",
         {
           "translate-x-0": isMessageOpen,
           "translate-x-full": !isMessageOpen,
@@ -174,7 +181,7 @@ export default function Message({
                 onClick={() => {
                   setIsMessageOpen(false);
                 }}
-                className="mr-5 w-8 cursor-pointer text-gray-200"
+                className="mr-2 w-8 cursor-pointer text-gray-200"
               />
 
               {receiver.avatar ? (
@@ -199,13 +206,18 @@ export default function Message({
                 <UserCircleIcon className="mx-2 h-10 w-10 text-zinc-600 md:h-12 md:w-12" />
               )}
 
-              <div className="text-center">
-                <h2 className="text-[20px] font-medium text-gray-50">
+              <div className="flex flex-col">
+                <h2 className="text-[20px] font-medium text-gray-50 capitalize">
                   {receiver.username}
                 </h2>
-                <span className="flex items-center gap-2 text-gray-300">
-                  <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                  Online
+                <span className="flex items-center text-sm gap-2 font-poppins text-gray-300">
+                  <span className={clsx(
+                    'w-2 h-2 rounded-full animate-pulse bg-green-600',
+                    {
+                      'inline-block': isOnline,
+                      'hidden': !isOnline
+                    })}></span>
+                  {isOnline ? 'online' : formatLastSeen(receiver.lastSeenAt)}
                 </span>
               </div>
             </div>

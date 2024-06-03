@@ -4,6 +4,7 @@ export interface UserType {
   email: string;
   avatar?: string;
   createdAt: Date;
+  lastSeenAt: string;
 }
 
 export interface Estate {
@@ -18,7 +19,7 @@ export interface Estate {
   latitude: string;
   longitude: string;
   type: "buy" | "rent";
-  property: "apartment" | "house" | "condo" | "land";
+  property: "apartment" | "house" | "condo";
   createdAt?: string;
   updatedAt?: string;
   isSaved?: boolean;
@@ -52,7 +53,7 @@ export interface EstateRaw {
   latitude: string;
   longitude: string;
   type: "buy" | "rent";
-  property: "apartment" | "house" | "condo" | "land";
+  property: "apartment" | "house" | "condo";
   createdAt?: string;
   updatedAt?: string;
   isSaved?: boolean;
@@ -64,7 +65,10 @@ export interface ChatType {
   _id: string;
   messages: string[];
   participants: UserType[];
-  post: string;
+  post: {
+    title: string;
+    city: string;
+  };
   seenBy: string[];
   latestMessage: string;
   createdAt: Date;
@@ -76,4 +80,83 @@ export interface MessageType {
   text: string;
   sender: string;
   createdAt: string;
+}
+
+export interface City {
+  "city": string,
+  "coordinates": {
+    "lon": number,
+    "lat": number
+  }
+}
+
+export interface Address {
+  place: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Country {
+  iso2: string;
+  coordinates: { lon: number; lat: number };
+  country: string;
+}
+
+export interface Viewport {
+  width?: number | string;
+  height?: number | string;
+  latitude: number;
+  longitude: number;
+  zoom?: number;
+}
+
+export interface GeoJSONFeature {
+  type: string;
+  id: string;
+  geometry: {
+    type: string;
+    coordinates: [number, number];
+  };
+  properties: Properties;
+}
+
+interface Properties {
+  mapbox_id: string;
+  feature_type: string;
+  full_address: string;
+  name: string;
+  name_preferred: string;
+  coordinates: Coordinates;
+  place_formatted: string;
+  context: Context;
+}
+
+interface Coordinates {
+  longitude: number;
+  latitude: number;
+}
+
+
+interface Context {
+  street?: Record<string, string>;
+  neighborhood?: Record<string, string>;
+  postcode?: Record<string, string>;
+  locality?: Record<string, string>;
+  place?: Record<string, string>;
+  district: District;
+  region: Region;
+  country?: Record<string, string>;
+}
+
+interface District {
+  mapbox_id: string;
+  name: string;
+}
+
+interface Region {
+  mapbox_id: string;
+  name: string;
+  region_code: string;
+  region_code_full: string;
 }

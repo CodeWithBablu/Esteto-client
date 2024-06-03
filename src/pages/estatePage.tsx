@@ -65,7 +65,7 @@ export default function EstatePage() {
                   <MapIcon className="w-5 h-5 shrink-0" />
                   <span>{estate.address}</span>
                 </div>
-                <span className="price">{estate.price}</span>
+                <span className="price">₹ {estate.price}</span>
               </div>
 
               <Tooltip
@@ -100,11 +100,12 @@ export default function EstatePage() {
             </div>
 
             <div
-              className="bottom"
+              className="bottom bg-slate-100 p-3 rounded-xl list-disc list-inside"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(estate.postdetail.desc),
               }}
             ></div>
+
           </div>
         </div>
       </div>
@@ -142,7 +143,7 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Room Sizes</p>
-            <div className="listHorizontal flex flex-col justify-around gap-3 rounded-xl bg-gradient-to-r from-blue-100 to-stone-200 p-2 shadow-lg shadow-gray-300 sm:flex-row md:p-3">
+            <div className="listHorizontal flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-r from-blue-100 to-stone-200 shadow-lg shadow-gray-300 p-3">
               <div className="size">
                 <img src="/assets/icons/size.png" alt="size" />
                 <span>{estate.postdetail.size} sqft</span>
@@ -172,27 +173,27 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Nearby Places</p>
-            <div className="places flex flex-col justify-around gap-3 rounded-xl bg-gradient-to-br from-gray-200 to-teal-100 p-2 shadow-lg shadow-gray-300 sm:flex-row md:p-3 lg:flex-col xl:flex-row">
-              <div className="place flex flex-row items-center gap-3">
+            <div className="places flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-br from-gray-200 to-teal-100 shadow-lg shadow-gray-300 p-3">
+              <div className="place flex flex-row items-center gap-2">
                 <img src="/assets/icons/school.png" alt="school" />
-                <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
-                  <span className=" font-[600]">School</span>
+                <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
+                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">School</span>
                   <p>{estate.postdetail.school}</p>
                 </div>
               </div>
 
               <div className="place flex flex-row items-center gap-3">
                 <img src="/assets/icons/bus.png" alt="bus" />
-                <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
-                  <span className=" font-[600]">Bus Stop</span>
+                <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
+                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">Bus Stop</span>
                   <p>{estate.postdetail.bus}</p>
                 </div>
               </div>
 
               <div className="place flex flex-row items-center gap-3">
                 <img src="/assets/icons/restaurant.png" alt="Restaurant" />
-                <div className="placeText flex w-full max-w-[200px] flex-row items-center justify-between gap-3 sm:flex-col sm:items-start sm:gap-1 lg:flex-row xl:flex-col">
-                  <span className=" font-[600]">Restaurant</span>
+                <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
+                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">Restaurant</span>
                   <p>{estate.postdetail.restaurant}</p>
                 </div>
               </div>

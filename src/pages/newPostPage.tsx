@@ -10,10 +10,11 @@ import {
 } from "@heroicons/react/24/outline";
 
 import axios, { AxiosError } from "axios";
-import { UserType, errorHandler, toastMessage } from "@/lib";
+import { Address, City, UserType, Viewport, errorHandler, handleKeyDown, toastMessage } from "@/lib";
 import { useContext, useEffect, useState } from "react";
 import clsx from "clsx";
 import { AuthContext } from "@/context/AuthContext";
+import { formatDistance, formatPrice, pricelimit } from "@/lib/utils";
 
 const Loader = (
   <svg
@@ -26,26 +27,6 @@ const Loader = (
   </svg>
 );
 
-export interface Address {
-  place: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface Viewport {
-  width?: number | string;
-  height?: number | string;
-  latitude: number;
-  longitude: number;
-  zoom?: number;
-}
-
-export interface Country {
-  iso2: string;
-  coordinates: { lon: number; lat: number };
-  country: string;
-}
 
 interface IFormInput {
   title: string;
@@ -53,11 +34,10 @@ interface IFormInput {
   images: [string];
   address: string;
   city: string;
-  country: string;
   bedroom: number;
   bathroom: number;
   type: "buy" | "rent";
-  property: "apartment" | "house" | "condo" | "land";
+  property: "apartment" | "house" | "condo";
   latitude: string;
   longitude: string;
 
@@ -70,6 +50,14 @@ interface IFormInput {
   school?: number;
   bus?: number;
   restaurant?: number;
+}
+
+interface Query {
+  type: 'buy' | 'rent'
+  price: string;
+  school: string;
+  bus: string;
+  restaurant: string;
 }
 
 function NewPostPage() {
@@ -85,7 +73,15 @@ function NewPostPage() {
     zoom: 8,
   });
 
-  const [country, setCountry] = useState<Country | null>(null);
+  const [query, setQuery] = useState<Query>({
+    type: "rent",
+    price: "1000",
+    school: '',
+    bus: '',
+    restaurant: '',
+  });
+
+  const [city, setCity] = useState<City | null>(null);
   const [address, setAddress] = useState<Address | null>(null);
 
   const { currUser } = useContext(AuthContext) as { currUser: UserType };
@@ -116,67 +112,79 @@ function NewPostPage() {
     }
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setQuery((prev) => ({ ...prev, price: pricelimit[query.type].min.toFixed(0), [e.target.name]: e.target.value }));
+  };
+
   const onclick = () => {
     let errorMessage = "";
-    if (desc.length === 0 || desc === "<p><br></p>")
-      errorMessage += `description: desc required\n`;
+    let errorCount = 4;
+    if (desc.length === 0 || desc === "<p><br></p>") {
+      errorCount--;
+      errorMessage += `description : No details? No listing magic!\n`;
+    }
 
-    if (images.length === 0) errorMessage += `images: upload images\n`;
+    if (images.length === 0) {
+      errorCount--;
+      errorMessage += `images : No pics? No property peek!\n`
+    }
 
-    if (!country || !address) errorMessage += `address not specified\n`;
+    if (!city || !address) {
+      errorCount--;
+      errorMessage += `address : Address hidden, mystery location!\n`;
+    }
 
     if (Object.entries(errors).length > 0) {
-      for (const [key, value] of Object.entries(errors).slice(0, 4)) {
+      for (const [key, value] of Object.entries(errors).slice(0, errorCount)) {
         errorMessage += `${key} : ${value.message}\n`;
       }
     }
 
-    if (errorMessage.length > 0) toastMessage("alert", errorMessage, 6000);
+    if (errorMessage.length > 0) toastMessage("error", errorMessage, 6000);
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setError("");
     setIsLoading(true);
     try {
-      if (desc.length === 0 || desc === "<p><br></p>")
-        throw new Error("desc required");
+      if (desc.length === 0 || desc === "<p><br></p>") throw new Error("desc required");
 
       if (images.length === 0) throw new Error("upload images");
 
-      if (!country) throw new Error("country required");
+      if (!city || !address) throw new Error("address not specified");
 
-      if (!address) throw new Error("address not specified");
-
+      const { bedroom, bathroom, property, price, title, type, size, utilities, pet, income, school, bus, restaurant } = data;
+      const { city: cityName, place, latitude: lat, longitude: log } = address as Address;
+      console.log(bedroom);
       const body = {
         post: {
-          title: data.title,
-          price: data.price,
+          title,
+          price,
           images: images,
-          address: address.place,
-          city: address.city.toLowerCase(),
-          bedroom: data.bedroom,
-          bathroom: data.bathroom,
-          type: data.type,
-          property: data.property,
-          latitude: address.latitude,
-          longitude: address.longitude,
+          address: place,
+          city: cityName.toLowerCase(),
+          bedroom,
+          bathroom,
+          type,
+          property,
+          latitude: lat,
+          longitude: log,
         },
         postdetail: {
           desc: desc,
-          utilities: data.utilities,
-          pet: data.pet,
-          income: data.income || "Not specified",
-          size: data.size,
-          school: data.school || -1,
-          bus: data.bus || -1,
-          restaurant: data.restaurant || -1,
+          utilities,
+          pet,
+          income: income || "Not specified",
+          size,
+          school: school || 0,
+          bus: bus || 0,
+          restaurant: restaurant || 0,
         },
       };
       const res = await axios.post(`/api/post`, body);
       toastMessage("success", res.data.message, 4000);
       navigate("/profile");
     } catch (error) {
-      console.log(error);
 
       if (error instanceof AxiosError) {
         setError(error.response?.data.message);
@@ -215,119 +223,13 @@ function NewPostPage() {
             </div>
 
             <div className="item">
-              <label htmlFor="price">
-                Price <span className="text-rose-500">*</span>
-              </label>
-              <input
-                {...register("price", { required: "price required" })}
-                aria-invalid={errors.price ? "true" : "false"}
-                min={0}
-                max={1000000}
-                id="price"
-                name="price"
-                type="number"
-                placeholder="price"
-                autoComplete="price"
-              />
-            </div>
-
-            <div className="item">
-              <label htmlFor="size">
-                Total Size (sqft) <span className="text-rose-500">*</span>
-              </label>
-              <div className="relative flex w-full items-center">
-                <input
-                  {...register("size", { required: "size required" })}
-                  min={0}
-                  step={0.01}
-                  className="m-input"
-                  id="size"
-                  name="size"
-                  type="number"
-                />
-                <span className="absolute left-[1px] flex h-[calc(100%-1.5px)] items-center rounded-l-[5px] border-none bg-slate-200 px-2 shadow-xl">
-                  sqft
-                </span>
-              </div>
-            </div>
-
-
-            <div className="item description">
-              <label htmlFor="desc">
-                Description <span className="text-rose-500">*</span>
-              </label>
-              <ReactQuill theme="snow" onChange={setDesc} value={desc} />
-            </div>
-
-            {/* <div className="item">
-              <label htmlFor="address">Address <span className="text-rose-500">*</span></label>
-              <input {...register("address", { required: "address required. max: 50", maxLength: 50 })}
-                aria-invalid={errors.address ? "true" : "false"} maxLength={50}
-                id="address" name="address" type="text" placeholder="address" autoComplete="address" />
-            </div> */}
-            <PlaceModal type="country" data={country} setData={setCountry} />
-
-            {currUser && (
-              <AddressModal
-                currUser={currUser}
-                country={country}
-                address={address}
-                setAddress={setAddress}
-                userLocation={userLocation}
-                setUserLocation={setUserLocation}
-                viewport={viewport}
-                setViewPort={setViewPort}
-              />
-            )}
-
-
-
-
-            <div className="item">
-              <label htmlFor="bedroom">
-                Bedroom count <span className="text-rose-500">*</span>
-              </label>
-              <input
-                {...register("bedroom", { required: "bedroom required" })}
-                aria-invalid={errors.bedroom ? "true" : "false"}
-                defaultValue={0}
-                min={0}
-                max={1000}
-                id="bedroom"
-                name="bedroom"
-                type="number"
-                placeholder="bedroom"
-                autoComplete="bedroom"
-              />
-            </div>
-
-            <div className="item">
-              <label htmlFor="bathroom">
-                Bathroom count <span className="text-rose-500">*</span>
-              </label>
-              <input
-                {...register("bathroom", { required: "bathroom required" })}
-                aria-invalid={errors.bathroom ? "true" : "false"}
-                defaultValue={0}
-                min={0}
-                max={1000}
-                id="bathroom"
-                name="bathroom"
-                type="number"
-                placeholder="bathroom"
-                autoComplete="bathroom"
-              />
-            </div>
-
-            <div className="item">
               <label htmlFor="type">Type</label>
               <select
                 {...register("type", { required: "type required" })}
                 name="type"
+                onChange={handleChange}
               >
-                <option value="rent" defaultChecked>
-                  Rent
-                </option>
+                <option value="rent" defaultChecked>Rent</option>
                 <option value="buy">Buy</option>
               </select>
             </div>
@@ -341,9 +243,117 @@ function NewPostPage() {
                 <option value="apartment">Apartment</option>
                 <option value="house">House</option>
                 <option value="condo">Condo</option>
-                <option value="land">Land</option>
               </select>
             </div>
+
+            <div className="item relative">
+              <label htmlFor="price">
+                Price <span className="text-rose-500">*</span>
+              </label>
+              <input
+                {...register("price", { required: "price required. 1000-100Cr" })}
+                aria-invalid={errors.price ? "true" : "false"}
+                onChange={handleChange}
+                className="remove-arrow"
+                min={1000}
+                max={pricelimit[query.type].max}
+                id="price"
+                name="price"
+                type="number"
+                placeholder="price"
+                autoComplete="off"
+                onKeyDown={(e) => handleKeyDown(e, pricelimit[query.type].max)}
+              />
+              <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                {(query.price === '' || query.price === '0') ? '' : formatPrice(Number(query.price))}
+              </span>
+            </div>
+
+            <div className="item">
+              <label htmlFor="bedroom">
+                Bedroom count <span className="text-rose-500">*</span>
+              </label>
+              <input
+                {...register("bedroom", { required: "bedroom required. 1-10" })}
+                aria-invalid={errors.bedroom ? "true" : "false"}
+                min={1}
+                max={10}
+                id="bedroom"
+                name="bedroom"
+                type="number"
+                placeholder="bedroom"
+                autoComplete="off"
+                onKeyDown={(e) => handleKeyDown(e)}
+              />
+            </div>
+
+            <div className="item">
+              <label htmlFor="bathroom">
+                Bathroom count <span className="text-rose-500">*</span>
+              </label>
+              <input
+                {...register("bathroom", { required: "bathroom required. 1-10" })}
+                aria-invalid={errors.bathroom ? "true" : "false"}
+                min={1}
+                max={10}
+                id="bathroom"
+                name="bathroom"
+                type="number"
+                placeholder="bathroom"
+                autoComplete="off"
+                onKeyDown={(e) => handleKeyDown(e)}
+              />
+            </div>
+
+
+            <div className="item description">
+              <label htmlFor="desc">
+                Description <span className="text-rose-500">*</span>
+              </label>
+              <ReactQuill theme="snow" onChange={setDesc} value={desc} />
+            </div>
+
+
+            <div className="item h-full">
+              <label htmlFor="city">City <span className="text-rose-500">*</span></label>
+              <PlaceModal type="city" data={city} setData={setCity} />
+            </div>
+
+            {currUser && (
+              <AddressModal
+                currUser={currUser}
+                city={city}
+                address={address}
+                setAddress={setAddress}
+                userLocation={userLocation}
+                setUserLocation={setUserLocation}
+                viewport={viewport}
+                setViewPort={setViewPort}
+              />
+            )}
+
+            <div className="item relative">
+              <label htmlFor="size">
+                Built up area <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative flex w-full items-center">
+                <input
+                  {...register("size", { required: "Built up area required. 150-15000 sq.ft" })}
+                  min={150}
+                  max={15000}
+                  step={1}
+                  className="remove-arrow"
+                  id="size"
+                  name="size"
+                  type="number"
+                  onKeyDown={(e) => handleKeyDown(e, 15000, 'Sq.ft', 150)}
+                />
+                <span className="absolute bottom-[5px] right-[1px] flex flex-col h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                  Sq.ft
+                </span>
+              </div>
+            </div>
+
 
             <div className="item">
               <label htmlFor="utilities">Utilities Policy</label>
@@ -380,56 +390,62 @@ function NewPostPage() {
               />
             </div>
 
-            <div className="item">
+            <div className="item relative">
               <label htmlFor="school">School</label>
               <div className="relative flex w-full items-center">
                 <input
                   {...register("school")}
-                  min={0}
+                  min={50}
                   max={20000}
-                  className="m-input"
+                  className="remove-arrow"
+                  onChange={handleChange}
                   id="school"
                   name="school"
                   type="number"
+                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
                 />
-                <span className="absolute left-[1px] flex h-[calc(100%-1.5px)] items-center rounded-l-[5px] border-none bg-slate-200 px-2 shadow-xl">
-                  m
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                  {(query.school === '' || query.school === '0') ? '' : formatDistance(Number(query.school))}
                 </span>
               </div>
             </div>
 
-            <div className="item">
+            <div className="item relative">
               <label htmlFor="bus">bus</label>
               <div className="relative flex w-full items-center">
                 <input
                   {...register("bus")}
-                  min={0}
+                  min={50}
                   max={20000}
-                  className="m-input"
+                  className="remove-arrow"
+                  onChange={handleChange}
                   id="bus"
                   name="bus"
                   type="number"
+                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
                 />
-                <span className="absolute left-[1px] flex h-[calc(100%-1.5px)] items-center rounded-l-[5px] border-none bg-slate-200 px-2 shadow-xl">
-                  m
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                  {(query.bus === '' || query.bus === '0') ? '' : formatDistance(Number(query.bus))}
                 </span>
               </div>
             </div>
 
-            <div className="item">
+            <div className="item relative">
               <label htmlFor="restaurant">Restaurant</label>
               <div className="relative flex w-full items-center">
                 <input
                   {...register("restaurant")}
-                  min={0}
+                  min={50}
                   max={20000}
-                  className="m-input"
+                  className="remove-arrow"
+                  onChange={handleChange}
                   id="restaurant"
                   name="restaurant"
                   type="number"
+                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
                 />
-                <span className="absolute left-[1px] flex h-[calc(100%-1.5px)] items-center rounded-l-[5px] border-none bg-slate-200 px-2 shadow-xl">
-                  m
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                  {(query.restaurant === '' || query.restaurant === '0') ? '' : formatDistance(Number(query.restaurant))}
                 </span>
               </div>
             </div>

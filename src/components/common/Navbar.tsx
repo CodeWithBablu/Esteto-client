@@ -7,6 +7,7 @@ import Chat from "../Profile/Chat";
 import Menu from "./Menu";
 import { UserType, useNotificationStore } from "@/lib";
 import { AuthContext } from "@/context/AuthContext";
+import { ChatContext } from "@/context/ChatContext";
 
 export default function Navbar() {
   const refs = useRef({
@@ -14,33 +15,30 @@ export default function Navbar() {
     chatTriggerRef: null as HTMLDivElement | null,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const { currUser } = useContext(AuthContext) as { currUser: UserType | null };
-  const { count, fetch } = useNotificationStore((state) => ({
-    count: state.count,
-    fetch: state.fetch,
-  }));
+  const { count, fetch } = useNotificationStore();
+  const { isChatOpen, setChatOpen } = useContext(ChatContext);
 
+  console.log(count);
   useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (refs.current.chatRef && refs.current.chatTriggerRef)
+        if (
+          !refs.current.chatTriggerRef.contains(e.target as Node) &&
+          !refs.current.chatRef.contains(e.target as Node)
+        ) {
+          setChatOpen(false);
+        }
+    }
+
     document.addEventListener("mousedown", handler);
-    if (currUser) fetch();
+    if (currUser && count === -1) fetch();
 
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, [fetch, currUser]);
+  }, [fetch, currUser, count, setChatOpen]);
 
-  function handler(e: MouseEvent) {
-    if (refs.current.chatRef && refs.current.chatTriggerRef)
-      if (
-        !refs.current.chatTriggerRef.contains(e.target as Node) &&
-        !refs.current.chatRef.contains(e.target as Node)
-      ) {
-        setIsChatOpen(false);
-      }
-  }
-
-  // if (currUser) fetch();
 
   const location = useLocation();
 
@@ -79,7 +77,7 @@ export default function Navbar() {
             <a href="/">Home</a>
             <a href="/">About</a>
             <a href="/">Contact</a>
-            <a href="/">Agents</a>
+            <a href="/list">Listings</a>
           </div>
         </div>
 
@@ -93,7 +91,7 @@ export default function Navbar() {
               <Menu />
               <div
                 ref={(el) => (refs.current.chatTriggerRef = el)}
-                onClick={() => setIsChatOpen((prev) => !prev)}
+                onClick={() => setChatOpen(!isChatOpen)}
                 className="relative cursor-pointer"
               >
                 <img
@@ -105,7 +103,7 @@ export default function Navbar() {
                   className={clsx(
                     "absolute right-0 top-0 flex h-6 w-6 -translate-x-1/2 -translate-y-1/3 items-center justify-center rounded-full bg-rose-600 text-sm font-medium text-gray-100",
                     {
-                      hidden: count === 0,
+                      hidden: count <= 0,
                       "inline-block": count > 0,
                     },
                   )}
@@ -168,7 +166,7 @@ export default function Navbar() {
           refs.current.chatRef = el;
         }}
       >
-        <Chat isOpen={isChatOpen} isChatOpen={isChatOpen} currUser={currUser} />
+        <Chat isOpen={isChatOpen} currUser={currUser} />
       </div>
     </>
   );

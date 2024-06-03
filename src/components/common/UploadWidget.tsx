@@ -54,7 +54,6 @@ function UploadWidget({
     if (loaded) {
       return window.cloudinary.createUploadWidget(uwConfig, (error, result) => {
         if (!error && result && result.event === "success") {
-          console.log("Done! Here is the image info: ", result.info);
           setState((prev) => [...prev, result.info.secure_url as string]);
         }
       });
@@ -70,7 +69,7 @@ function UploadWidget({
   return (
     <button
       id="upload_widget"
-      className={`mt-5 rounded-md z-30 bg-indigo-600 px-6 py-2 font-poppins font-medium text-gray-100 
+      className={`mt-5 rounded-md z-20 bg-indigo-600 px-6 py-2 font-poppins font-medium text-gray-100 
         ${loaded ? "opacity-100" : "pointer-events-none opacity-50"}`}
       disabled={!loaded}
       onClick={handleClick}

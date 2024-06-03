@@ -1,22 +1,21 @@
 import "leaflet/dist/leaflet.css";
 
 import { MapContainer, TileLayer } from "react-leaflet";
-import { Estate, EstateRaw, useCoordinateStore } from "../../lib";
+import { Estate, EstateRaw, useCityStore } from "../../lib";
 import Pin from "./Pin";
 
 export default function Map({ data }: { data: Estate[] | EstateRaw[] }) {
-  console.log(data);
-  const { coordinate } = useCoordinateStore();
+  const { city } = useCityStore();
   return (
     <MapContainer
       className="z-10 h-full w-full bg-zinc-900"
       center={
-        coordinate
-          ? [coordinate.lat, coordinate.lon]
+        city?.coordinates
+          ? [city.coordinates.lat, city.coordinates.lon]
           : [parseFloat(data[0].latitude), parseFloat(data[0].longitude)]
       }
-      zoom={8}
-      scrollWheelZoom={true}
+      zoom={10}
+      scrollWheelZoom={false}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -1,27 +1,87 @@
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import "../../styles/ui/filter.scss";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Link, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import PlaceModal from "../common/PlaceModal";
+import { City, toastMessage, useCityStore } from "@/lib";
+import { formatPrice, handleKeyDown, pricelimit } from "@/lib/utils";
+
+interface IFormInput {
+  city?: string;
+  type: string;
+  property: string;
+  bedroom: string;
+  minPrice: string;
+  maxPrice: string;
+}
 
 export default function Filter() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const [city, setCity] = useState<City | null>(null)
 
-  const [query, setQuery] = useState({
+
+  const [query, setQuery] = useState<IFormInput>({
     city: searchParams.get("city") || "",
     type: searchParams.get("type") || "",
     property: searchParams.get("property") || "",
-    bedroom: searchParams.get("bedroom") || "",
+    bedroom: (searchParams.get("bedroom") === '0' ? "" : searchParams.get("bedroom")) || "",
     minPrice: searchParams.get("minPrice") || "0",
-    maxPrice: searchParams.get("maxPrice") || "1000000",
+    maxPrice: searchParams.get("maxPrice") || "1000000000",
   });
+
+  useEffect(() => {
+
+    const cityParams: City = {
+      city: searchParams.get("city") as string,
+      coordinates: {
+        lon: parseFloat(searchParams.get("lon") as string),
+        lat: parseFloat(searchParams.get("lat") as string),
+      }
+    }
+
+    if (cityParams.city && cityParams.coordinates.lat && cityParams.coordinates.lon && !city) {
+      setCity(cityParams);
+    }
+
+  }, [city, searchParams])
+
+
+  const { setCityState } = useCityStore();
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setQuery((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    console.log(query);
+    setQuery((prev) => ({ ...prev, minPrice: '1000', maxPrice: '1000000000', [e.target.name]: e.target.value }));
   };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const data: IFormInput = {
+      type: query.type,
+      property: query.property,
+      bedroom: query.bedroom !== '0' ? query.bedroom : "",
+      minPrice: (query.minPrice as string) === '' ? "1000" : query.minPrice,
+      maxPrice: (query.maxPrice as string) === '' ? "1000000000" : query.maxPrice,
+    };
+
+    if (!city) {
+      toastMessage("alert", "Type in the city name to begin your property search 😅", 4000)
+      return;
+    }
+
+    if (Number(query.minPrice) > Number(query.maxPrice)) {
+      toastMessage("alert", "The minimum price must be lower than the maximum price 😅", 4000)
+      return;
+    }
+
+    if (city)
+      setCityState({ city: city.city, coordinates: { lat: city.coordinates.lat, lon: city.coordinates.lon } });
+
+    navigate(`/list?city=${city.city}&type=${data.type}&property=${data.property}&bedroom=${data.bedroom !== '0' ? data.bedroom : ""}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&lat=${city ? city.coordinates.lat : ""}&lon=${city ? city.coordinates.lon : ""}`);
+  }
 
   return (
     <div className="filter">
@@ -30,21 +90,17 @@ export default function Filter() {
         <b className="font-semibold">{searchParams.get("city")}</b>
       </h1>
 
-      <form>
-        <div className="top">
-          <div className="item flex-1">
-            <label htmlFor="city">City</label>
-            <input
-              onChange={handleChange}
-              type="text"
-              name="city"
-              id="city"
-              placeholder="City Location"
-              defaultValue={query.city}
-            />
+      <form onSubmit={handleSubmit}>
+
+
+        <div className=" grid grid-flow-row grid-cols-2 gap-x-2 gap-y-5 md:grid-cols-3 md:gap-y-3">
+
+          <div className="item">
+            <label htmlFor="city">City <span className="text-rose-500">*</span></label>
+            <PlaceModal type="city" data={city} setData={setCity} />
           </div>
 
-          <div className="item flex-1">
+          <div className="item">
             <label htmlFor="type">Type</label>
             <select
               onChange={handleChange}
@@ -57,9 +113,7 @@ export default function Filter() {
               <option value="rent">Rent</option>
             </select>
           </div>
-        </div>
 
-        <div className="bottom grid grid-flow-row grid-cols-2 gap-x-2 gap-y-5 md:grid-cols-4 md:gap-y-0">
           <div className="item">
             <label htmlFor="property">Property</label>
             <select
@@ -72,7 +126,6 @@ export default function Filter() {
               <option value="apartment">Apartment</option>
               <option value="house">House</option>
               <option value="condo">Condo</option>
-              <option value="land">Land</option>
             </select>
           </div>
 
@@ -82,50 +135,64 @@ export default function Filter() {
               onChange={handleChange}
               type="number"
               min={0}
-              max={1000}
+              max={10}
               name="bedroom"
               id="bedroom"
+              autoComplete="off"
               placeholder="any"
               defaultValue={query.bedroom}
             />
           </div>
 
-          <div className="item">
+          <div className="item relative col-span-2 md:col-span-1">
             <label htmlFor="minPrice">Min Price</label>
             <input
+              className="relative remove-arrow"
               onChange={handleChange}
               type="number"
-              min={0}
-              max={1000000}
               name="minPrice"
               id="minPrice"
               placeholder="any"
+              min={1000}
+              max={1000000000}
+              autoComplete="off"
               defaultValue={query.minPrice}
+              onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
             />
+            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
+              {formatPrice(Number(query.minPrice))}
+            </span>
           </div>
 
-          <div className="item">
+          <div className="item relative col-span-2 md:col-span-1">
             <label htmlFor="maxPrice">Max Price</label>
             <input
+              className="relative remove-arrow"
               onChange={handleChange}
               type="number"
-              min={0}
-              max={1000000}
               name="maxPrice"
               id="maxPrice"
               placeholder="any"
+              min={1000}
+              max={1000000000}
+              autoComplete="off"
               defaultValue={query.maxPrice}
+              onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
             />
+            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
+              {formatPrice(Number(query.maxPrice))}
+            </span>
           </div>
+
         </div>
 
-        <Link
-          to={`/list?city=${query.city}&type=${query.type}&property=${query.property}&bedroom=${query.bedroom}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`}
-          className="mt-5 flex h-14 min-w-[100px] flex-grow cursor-pointer items-center justify-center gap-5 rounded-md border-none bg-blue-600 px-6 text-xl text-gray-100"
+        <button
+          type="submit"
+          className="mt-5 flex h-12 min-w-[100px] flex-grow cursor-pointer items-center justify-center gap-5 rounded-md border-none bg-blue-600 px-6 text-lg text-gray-50"
         >
-          <MagnifyingGlassIcon className="inline-block h-6 w-6" />
+          <MagnifyingGlassIcon className="inline-block h-5 w-5" />
           <span className="inline-block">Search</span>
-        </Link>
+        </button>
       </form>
     </div>
   );

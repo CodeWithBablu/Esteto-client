@@ -100,7 +100,11 @@ export default function ProfilePage() {
           >
             <Await
               resolve={res.user}
-              errorElement={<p>Error loading posts!</p>}
+              errorElement={
+                <div className=" w-full flex flex-col">
+                  <span className="text-xl font-chillax font-medium animate-pulse">Some technical glitch occured</span>
+                  <img src="/assets/icons/oops.png" alt="search" className="h-[15rem] w-[15rem] object-contain" />
+                </div>}
             >
               {(res: {
                 data: {
@@ -115,7 +119,7 @@ export default function ProfilePage() {
                         btnDisabled={true}
                       />
                     ) : (
-                      <span className=" text-gray-500">** Nothing to show</span>
+                      <span className=" text-gray-500">** Added posts will show here</span>
                     )}
                   </>
                 );
@@ -137,7 +141,7 @@ export default function ProfilePage() {
           >
             <Await
               resolve={res.user}
-              errorElement={<p>Error loading posts!</p>}
+              errorElement={<p className="animate-pulse">Some error occured. Please try again!</p>}
             >
               {(res: {
                 data: {

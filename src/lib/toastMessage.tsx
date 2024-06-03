@@ -12,7 +12,7 @@ export const toastMessage = (
     toast.success(`${message}`, {
       duration,
       style: {
-        maxWidth: "800px",
+        maxWidth: "1000px",
         borderRadius: "10px",
         border: "1px solid #bbf7d0",
         background: "rgba(240, 253, 244, 0.5)",
@@ -28,8 +28,8 @@ export const toastMessage = (
     toast.error(`${message}`, {
       duration,
       style: {
-        borderRadius: "5px",
-        maxWidth: "800px",
+        maxWidth: "1000px",
+        borderRadius: "10px",
         border: "1px solid #fecaca",
         background: "rgba(254, 242, 242, 0.5)",
         backdropFilter: "blur(10px)",
@@ -45,8 +45,8 @@ export const toastMessage = (
       icon: <WarningSvg className={"h-6 w-6 stroke-amber-500 stroke-[1px]"} />,
       duration,
       style: {
-        maxWidth: "800px",
-        borderRadius: "5px",
+        maxWidth: "1000px",
+        borderRadius: "10px",
         border: "1px solid #fde68a",
         background: "rgba(254, 252, 232, 0.5)",
         backdropFilter: "blur(10px)",
@@ -62,8 +62,8 @@ export const toastMessage = (
       icon: <AlertSvg className={"h-6 w-6"} />,
       duration,
       style: {
-        maxWidth: "800px",
-        borderRadius: "5px",
+        maxWidth: "1000px",
+        borderRadius: "10px",
         border: "1px solid #bfdbfe",
         background: "rgba(239, 246, 255, 0.5)",
         backdropFilter: "blur(10px)",

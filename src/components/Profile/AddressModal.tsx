@@ -1,6 +1,6 @@
 import { Dialog } from "@radix-ui/themes";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import Map, {
   GeolocateControl,
@@ -10,22 +10,14 @@ import Map, {
 } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import axios from "axios";
-import { UserType, toastMessage } from "@/lib";
-import { Address, Country } from "@/pages/newPostPage";
+import { Address, City, GeoJSONFeature, UserType, Viewport, toastMessage } from "@/lib";
 import clsx from "clsx";
+import PlaceModal from "../common/PlaceModal";
 
-
-interface Viewport {
-  width?: number | string;
-  height?: number | string;
-  latitude: number;
-  longitude: number;
-  zoom?: number;
-}
 
 export default function AddressModal({
   currUser,
-  country,
+  city,
   address,
   setAddress,
   userLocation,
@@ -34,7 +26,7 @@ export default function AddressModal({
   setViewPort,
 }: {
   currUser: UserType;
-  country: Country | null,
+  city: City | null,
   address: Address | null;
   setAddress: React.Dispatch<React.SetStateAction<Address | null>>,
   userLocation: { latitude: number; longitude: number } | null;
@@ -47,20 +39,14 @@ export default function AddressModal({
 
   const geoLocatorRef = useRef<mapboxgl.GeolocateControl>(null);
 
-  const handleSearch = useDebouncedCallback(async (term: string) => {
-    console.log(country);
-    const query = `https://api.mapbox.com/search/geocode/v6/forward?q=${term}&country=${country ? country.country : ""}&proximity=ip&language=en&autocomplete=true&access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`;
-    const res = await axios.get(query);
+  useEffect(() => {
 
-    console.log(res);
+    if (address) {
+      setViewPort(prev => ({ ...prev, latitude: address.latitude, longitude: address.longitude, zoom: 15 }));
+    }
 
-    console.log(`Searching... ${term}`);
-  }, 500);
+  }, [address, setViewPort]);
 
-
-  // useEffect(() => {
-
-  // }, [open]);
 
   const handleOnMapLoad = () => { };
 
@@ -71,10 +57,10 @@ export default function AddressModal({
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      if (country)
+      if (city)
         setOpen(isOpen)
       else
-        toastMessage("error", "Country is required", 5000);
+        toastMessage("error", "Select city to start your serach", 5000);
     }
     else
       setOpen(isOpen);
@@ -82,25 +68,39 @@ export default function AddressModal({
 
   const fetchAddress = useDebouncedCallback(async () => {
     let query = "";
-    if (viewport)
-      query = `https://api.mapbox.com/search/geocode/v6/reverse?country=${country?.iso2 ? country.iso2 : ""}&language=en&longitude=${viewport.longitude}&latitude=${viewport.latitude}&access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`;
+    if (!city) {
+      toastMessage("error", "Select city to start your serach", 5000);
+      return;
+    }
 
-    console.log("lat: ", viewport?.latitude, "Long: ", viewport?.longitude);
+    if (viewport)
+      query = `https://api.mapbox.com/search/geocode/v6/reverse?country=in&language=en&longitude=${viewport.longitude}&latitude=${viewport.latitude}&access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`;
+
     try {
       const res = await axios.get(query);
 
       if (res.data.features && res.data.features[0]) {
-        const feature = res.data.features[0];
-        setAddress((prev) => ({
-          ...prev,
-          place: feature.properties.full_address,
-          city: (feature.properties.context.district.name as string).toLowerCase(),
-          latitude: feature.geometry.coordinates[1] as number,
-          longitude: feature.geometry.coordinates[0] as number
-        }));
+        const feature = res.data.features[0] as GeoJSONFeature;
+
+        if (feature.properties.context.district.name.toLowerCase().includes(city.city.toLowerCase())) {
+          setAddress((prev) => ({
+            ...prev,
+            place: feature.properties.full_address,
+            city: (feature.properties.context.district.name).toLowerCase(),
+            latitude: feature.geometry.coordinates[1],
+            longitude: feature.geometry.coordinates[0]
+          }));
+        }
+        else {
+          setAddress(null);
+          toastMessage("error", `Please select a region within ${city.city}`, 5000);
+          return;
+        }
+      } else {
+        toastMessage("alert", `Try to move to some nearby vicinity`, 5000);
+        return;
       }
 
-      console.log(address);
     } catch (error) {
       toastMessage("error", "Failed to fetch address", 5000);
     }
@@ -114,12 +114,10 @@ export default function AddressModal({
         longitude: e.viewState.longitude,
         zoom: e.viewState.zoom,
       }));
-      console.log(e.viewState);
+      fetchAddress();
     }
 
-    fetchAddress();
   }, [open, setViewPort, fetchAddress]);
-
 
 
   return (
@@ -145,15 +143,17 @@ export default function AddressModal({
           </div>
         </Dialog.Trigger>
 
-        <Dialog.Content className=" relative h-[80dvh] w-[95%] font-poppins font-medium max-w-[800px] p-0 xl:h-[800px] xl:w-[800px]">
-          <input
+        <Dialog.Content className=" relative h-[80dvh] w-[95%] font-poppins font-medium max-w-[800px] p-0 xl:h-[800px] xl:w-[800px] overflow-hidden">
+          {/* <input
             id="search"
             onChange={(e) => handleSearch(e.target.value)}
             className="absolute left-0 right-0 m-auto sm:right-auto sm:left-5 top-5 z-10 h-14 w-[95%] sm:w-80 text-lg rounded-lg bg-zinc-950/80 backdrop-blur-sm text-gray-50 placeholder-zinc-400 px-6 outline-none"
             placeholder="search location"
             type="text"
             autoComplete="off"
-          />
+          /> */}
+
+          <PlaceModal type="place" data={address} setData={setAddress} />
 
           <Map
             onMove={(e) => handleOnMove(e)}
@@ -161,6 +161,7 @@ export default function AddressModal({
             {...viewport}
             mapboxAccessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
             reuseMaps
+            style={{ width: '100%', height: '100%' }}
             mapStyle="mapbox://styles/mapbox/streets-v9"
           >
 

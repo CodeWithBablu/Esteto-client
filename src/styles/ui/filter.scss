@@ -24,23 +24,15 @@
       color: #4b5563;
       border-radius: 5px;
       font-size: 14px;
+      outline: none;
+
+      &:focus {
+        border-color: #2563eb;
+      }
 
       &::placeholder {
         color: #4b5563;
       }
     }
   }
-
-  .top {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  // .bottom {
-  //   display: flex;
-  //   justify-content: space-between;
-  //   align-items: center;
-  //   gap: 10px;
-  // }
 }
