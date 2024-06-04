@@ -67,6 +67,8 @@ export interface ChatType {
   participants: UserType[];
   post: {
     title: string;
+    images: [string];
+    address: string;
     city: string;
   };
   seenBy: string[];

@@ -7,15 +7,12 @@ export const formatLastSeen = (timestamp: string) => {
 
   const isToday = lastSeenDate.toDateString() === now.toDateString();
 
-  // Format options for time (hours and minutes)
+  // Format options for time (hours,minutes, am/pm)=>10:30pm
   const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
 
 
-  // Format options for date (short month name, day of the month)
+  // Format options for date (short month name, day of the month) => May,22
   const dateOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-
-  // Format options for time (AM/PM)
-  // const amPmOptions: Intl.DateTimeFormatOptions = { hour12: true };
 
   if (isToday) {
     // If last seen today, show time only
@@ -27,6 +24,40 @@ export const formatLastSeen = (timestamp: string) => {
     return `last seen ${formattedDate} at ${formattedTime}`;
   }
 };
+
+//10:30pm 09:30am
+export const formatTime = (timestamp: string): string => {
+  const time = new Date(timestamp);
+
+  // Format options for time (hours,minutes, am/pm)=>10:30pm
+  const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+
+  const formattedTime = time.toLocaleTimeString('en-IN', { ...options });
+  return formattedTime;
+}
+
+export const truncateText = (text: string, maxLength: number) => {
+  return text.length > maxLength ? text.slice(0, maxLength) + '... ' : text;
+};
+
+// Sun, 22 May
+export const formatMessageDate = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+  const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === date.toDateString();
+
+  if (isToday) {
+    return 'Today';
+  } else if (isYesterday) {
+    return 'Yesterday';
+  } else {
+    return date.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+};
+
+
 
 export const formatDistance = (distance: number) => {
   const threshold = 1000; // Threshold to switch between km and m (in meters)

@@ -11,7 +11,7 @@ import axios, { AxiosError } from "axios";
 import { useContext, useState } from "react";
 import clsx from "clsx";
 import { AuthContext } from "@/context/AuthContext";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, truncateText } from "@/lib/utils";
 import { ChatContext } from "@/context/ChatContext";
 
 const Loader = (
@@ -94,12 +94,12 @@ export default function Card({
 
       <div className="textContainer flex flex-col gap-3 md:justify-between">
         <h2 className="cardTitle">
-          <Link to={`/estate/${item._id}`}>{item.title.length > 30 ? item.title.slice(0, 30) + '...' : item.title}</Link>
+          <Link to={`/estate/${item._id}`}>{truncateText(item.title, 30)}</Link>
         </h2>
 
         <p className="address">
           <MapIcon className="w-5 h-5 shrink-0" />
-          <span>{item.address.length > 100 ? item.address.slice(0, 100) + '...' : item.address}</span>
+          <span>{truncateText(item.address, 100)}</span>
         </p>
 
         <div className="flex items-center justify-between w-full">

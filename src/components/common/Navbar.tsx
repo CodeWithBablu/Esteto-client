@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currUser } = useContext(AuthContext) as { currUser: UserType | null };
   const { count, fetch } = useNotificationStore();
-  const { isChatOpen, setChatOpen } = useContext(ChatContext);
+  const { isChatOpen, isMessageOpen, setChatOpen, setMessageOpen } = useContext(ChatContext);
 
   console.log(count);
   useEffect(() => {
@@ -28,6 +28,7 @@ export default function Navbar() {
           !refs.current.chatRef.contains(e.target as Node)
         ) {
           setChatOpen(false);
+          setMessageOpen(false);
         }
     }
 
@@ -37,7 +38,7 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, [fetch, currUser, count, setChatOpen]);
+  }, [fetch, currUser, count, setChatOpen, setMessageOpen]);
 
 
   const location = useLocation();
@@ -91,7 +92,7 @@ export default function Navbar() {
               <Menu />
               <div
                 ref={(el) => (refs.current.chatTriggerRef = el)}
-                onClick={() => setChatOpen(!isChatOpen)}
+                onClick={() => { setChatOpen(!isChatOpen) }}
                 className="relative cursor-pointer"
               >
                 <img
@@ -166,7 +167,7 @@ export default function Navbar() {
           refs.current.chatRef = el;
         }}
       >
-        <Chat isOpen={isChatOpen} currUser={currUser} />
+        <Chat isOpen={isChatOpen} isMessageOpen={isMessageOpen} currUser={currUser} setMessageOpen={setMessageOpen} />
       </div>
     </>
   );

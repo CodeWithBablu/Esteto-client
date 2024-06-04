@@ -1,26 +1,32 @@
 import { useContext, useEffect, useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { HomeModernIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import {
   ChatType,
   UserType,
   errorHandler,
   toastMessage,
+  truncateText,
   useNotificationStore,
 } from "@/lib";
 import Message from "./Message";
 import axios, { AxiosError } from "axios";
 import { SocketContext } from "@/context/SocketContext";
 import { Socket } from "socket.io-client";
+import { Tooltip } from "@radix-ui/themes";
+// import { ChatContext } from "@/context/ChatContext";
 
 export default function Chat({
   isOpen,
   currUser,
+  isMessageOpen,
+  setMessageOpen
 }: {
   isOpen: boolean;
   currUser: UserType | null;
+  isMessageOpen: boolean;
+  setMessageOpen: (isOpen: boolean) => void;
 }) {
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [chatInfo, setChatInfo] = useState<{
     sender: string;
     receiver: UserType | null;
@@ -90,7 +96,7 @@ export default function Chat({
       receiver,
       chatId,
     });
-    setIsMessageOpen(true);
+    setMessageOpen(true);
   };
 
   return (
@@ -170,88 +176,117 @@ export default function Chat({
                       (user) => user._id !== currUser._id,
                     )[0] as UserType;
                     return (
-                      <div
-                        onClick={() =>
-                          handleClick(
-                            currUser._id as string,
-                            receiver,
-                            chat._id,
-                            chat.seenBy,
-                          )
-                        }
-                        key={index}
-                        className={clsx(
-                          "user relative flex cursor-pointer items-center gap-5 border-b py-3 sm:gap-8",
-                          {
-                            "border-pink-600":
-                              !chat.seenBy.includes(currUser._id) &&
-                              chat.messages.length > 0,
-                            "border-zinc-600":
-                              chat.seenBy.includes(currUser._id) ||
-                              chat.messages.length === 0,
-                          },
-                        )}
-                      >
-                        {receiver.avatar ? (
-                          <>
-                            {!receiver.avatar.includes("<svg") && (
-                              <img
-                                src={receiver.avatar}
-                                className="h-12 w-12 rounded-full object-cover"
-                                alt="avatar"
-                              />
-                            )}
-                            {receiver.avatar.includes("<svg") && (
-                              <div
-                                className="h-12 w-12"
-                                dangerouslySetInnerHTML={{
-                                  __html: receiver.avatar,
-                                }}
-                              />
-                            )}
-                          </>
-                        ) : (
-                          <UserCircleIcon className="mx-2 h-10 w-10 text-zinc-600 md:h-12 md:w-12" />
-                        )}
+                      <div key={index}>
+                        <Tooltip className="font-poppins rounded-lg border-2 py-2 px-2 border-orange-600/50 shadow-lg shadow-orange-500/20 stroke-orange-500 fill-orange-500"
+                          content={
+                            <div className="flex items-center gap-3">
+                              {receiver.avatar ? (
+                                <>
+                                  {!receiver.avatar.includes("<svg") && (
+                                    <img
+                                      src={receiver.avatar}
+                                      className="h-8 w-8 rounded-full object-cover"
+                                      alt="avatar"
+                                    />
+                                  )}
+                                  {receiver.avatar.includes("<svg") && (
+                                    <div
+                                      className="h-8 w-8"
+                                      dangerouslySetInnerHTML={{
+                                        __html: receiver.avatar,
+                                      }}
+                                    />
+                                  )}
+                                </>
+                              ) : (
+                                <UserCircleIcon className="mx-2 h-10 w-10 text-zinc-600 md:h-12 md:w-12" />
+                              )}
 
-                        <div>
-                          <h2 className="font-chillax text-[16px] font-medium text-gray-50 sm:text-[18px]">
-                            {receiver.username}
-                          </h2>
-                          <span
+                              <div className="flex flex-col gap-1">
+                                <span className=" font-poppins text-sm">{receiver.username}</span>
+                                <span className=" font-poppins text-sm text-indigo-300">{receiver.email}</span>
+                              </div>
+                            </div>
+                          }>
+                          <div
+                            onClick={() =>
+                              handleClick(
+                                currUser._id as string,
+                                receiver,
+                                chat._id,
+                                chat.seenBy,
+                              )
+                            }
                             className={clsx(
-                              "font-chillax text-[14px] font-medium sm:text-[16px]",
+                              "user relative flex cursor-pointer items-center gap-5 border-b py-3 sm:gap-8",
                               {
-                                "text-pink-500":
+                                "border-pink-500":
                                   !chat.seenBy.includes(currUser._id) &&
                                   chat.messages.length > 0,
-                                "text-gray-300":
+                                "border-zinc-600":
                                   chat.seenBy.includes(currUser._id) ||
                                   chat.messages.length === 0,
                               },
                             )}
                           >
-                            {chat.latestMessage &&
-                              (chat.latestMessage.length > 25
-                                ? chat.latestMessage.slice(0, 40) + "..."
-                                : chat.latestMessage)}
-                            {!chat.latestMessage && "Hey! I am on esteto"}
-                          </span>
-                        </div>
+                            {chat.post.images ? (
+                              <>
+                                {chat.post.images[0] && (
+                                  <img
+                                    src={chat.post.images[0]}
+                                    className="h-12 w-12 rounded-full object-cover"
+                                    alt="property"
+                                  />
+                                )}
+                              </>
+                            ) : (
+                              <HomeModernIcon className="mx-2 h-10 w-10 text-zinc-400 md:h-12 md:w-12" />
+                            )}
 
-                        <span
-                          className={clsx(
-                            "absolute right-2 h-2 w-2 animate-pulse rounded-full bg-pink-600 ease-in",
-                            {
-                              "inline-block":
-                                !chat.seenBy.includes(currUser._id) &&
-                                chat.messages.length > 0,
-                              hidden:
-                                chat.seenBy.includes(currUser._id) ||
-                                chat.messages.length === 0,
-                            },
-                          )}
-                        ></span>
+                            <div className="w-full">
+                              <h2 className="font-chillax text-[16px] font-medium text-gray-50 sm:text-[18px]">
+                                {chat.post.title}
+                              </h2>
+                              <div className="flex justify-between w-full">
+                                <span
+                                  className={clsx(
+                                    "font-chillax text-[14px] font-medium sm:text-[16px]",
+                                    {
+                                      "text-pink-500":
+                                        !chat.seenBy.includes(currUser._id) &&
+                                        chat.messages.length > 0,
+                                      "text-gray-400":
+                                        chat.seenBy.includes(currUser._id) ||
+                                        chat.messages.length === 0,
+                                    },
+                                  )}
+                                >
+                                  {chat.latestMessage && truncateText(chat.latestMessage, 20)}
+                                  {!chat.latestMessage && "Hey! I am on esteto"}
+                                </span>
+
+                                <span className="text-orange-100 text-sm font-chillax">
+                                  {chat.post.address.split(',')[0] && truncateText(chat.post.address.split(',')[0], 20)}
+                                  {chat.post.city}
+                                </span>
+                              </div>
+                            </div>
+
+                            <span
+                              className={clsx(
+                                "absolute top-4 right-2 h-2 w-2 animate-pulse rounded-full bg-pink-500 ease-in",
+                                {
+                                  "inline-block":
+                                    !chat.seenBy.includes(currUser._id) &&
+                                    chat.messages.length > 0,
+                                  hidden:
+                                    chat.seenBy.includes(currUser._id) ||
+                                    chat.messages.length === 0,
+                                },
+                              )}
+                            ></span>
+                          </div>
+                        </Tooltip>
                       </div>
                     );
                   })}
@@ -268,7 +303,7 @@ export default function Chat({
           {/* //// messageContainer*/}
           <Message
             isMessageOpen={isMessageOpen}
-            setIsMessageOpen={setIsMessageOpen}
+            setMessageOpen={setMessageOpen}
             chatInfo={chatInfo}
           />
         </>
