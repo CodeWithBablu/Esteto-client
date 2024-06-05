@@ -115,7 +115,7 @@ function LoginPage() {
               </p>
             )}
 
-            <Link to="/register">Do you have an account?</Link>
+            <Link to="/register">Create a new account for free?</Link>
           </form>
 
           <div className="absolute -left-[4rem] -top-[7.5rem] z-10 h-[20rem] w-[20rem] animate-blob rounded-full bg-gradient-radial from-violet-500/50 opacity-60 blur-xl md:hidden"></div>

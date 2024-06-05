@@ -31,13 +31,21 @@ export default function PlaceModal<T extends Country | City | Address>({ type, d
       query = `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?select=name%20as%20city%2C%20coordinates%2C%20country_code%20as%20country&where=search%28city%2C%22${term.toLowerCase()}%22%29%20AND%20country%20%3D%22IN%22%20AND%20coordinates%20is%20not%20null&limit=20&offset=0&lang=en&timezone=UTC&include_links=false&include_app_metas=false`;
 
     const res = await axios.get(query);
-
+    console.log(res.data)
     if (type === 'place') {
       if (res.data.features) {
         if (!city)
-          return toastMessage("alert", "select city to start your serach", 4000);
+          return toastMessage("alert", "select city to start your search", 4000);
+        const pattern = term.split('').join('\\s*'); // \\s* account for zero or more spaces
+        const regex = new RegExp(pattern, 'i');
+
         const features = res.data.features as GeoJSONFeature[];
-        const updatedResponse = features.filter((place: GeoJSONFeature) => (place.properties.context.district.name.toLowerCase().includes(city.city.toLowerCase())));
+        console.log(features[0].properties.context.district.name.toLowerCase());
+
+        const res1 = features.filter((place: GeoJSONFeature) => regex.test(place.properties.context.district.name.toLowerCase()))
+        const res2 = features.filter((place: GeoJSONFeature) => (place.properties.context.district.name.toLowerCase().includes(city.city.toLowerCase())));
+        const updatedResponse = [...res1, ...res2];
+        console.log(updatedResponse);
         setResponse(updatedResponse);
       }
     }

@@ -16,6 +16,8 @@ interface IFormInput {
   maxPrice: string;
 }
 
+const validTypes = ["buy", "rent"];
+
 export default function Filter() {
   const [searchParams] = useSearchParams();
   const [city, setCity] = useState<City | null>(null)
@@ -26,7 +28,7 @@ export default function Filter() {
     type: searchParams.get("type") || "",
     property: searchParams.get("property") || "",
     bedroom: (searchParams.get("bedroom") === '0' ? "" : searchParams.get("bedroom")) || "",
-    minPrice: searchParams.get("minPrice") || "0",
+    minPrice: searchParams.get("minPrice") || "1000",
     maxPrice: searchParams.get("maxPrice") || "1000000000",
   });
 
@@ -53,7 +55,12 @@ export default function Filter() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setQuery((prev) => ({ ...prev, minPrice: '1000', maxPrice: '1000000000', [e.target.name]: e.target.value }));
+    setQuery((prev) => ({
+      ...prev,
+      minPrice: validTypes.includes(e.target.value) ? pricelimit[e.target.value as ("buy" | "rent")].min.toFixed(0) as string : '1000',
+      maxPrice: validTypes.includes(e.target.value) ? pricelimit[e.target.value as ("buy" | "rent")].max.toFixed(0) as string : '1000000000',
+      [e.target.name]: e.target.value
+    }));
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -72,7 +79,7 @@ export default function Filter() {
       return;
     }
 
-    if (Number(query.minPrice) > Number(query.maxPrice)) {
+    if (Number(data.minPrice) > Number(data.maxPrice)) {
       toastMessage("alert", "The minimum price must be lower than the maximum price 😅", 4000)
       return;
     }
@@ -156,11 +163,12 @@ export default function Filter() {
               min={1000}
               max={1000000000}
               autoComplete="off"
+              value={query.minPrice}
               defaultValue={query.minPrice}
               onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
             />
             <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
-              {formatPrice(Number(query.minPrice))}
+              {(query.minPrice === '' || query.minPrice === '0') ? '' : formatPrice(Number(query.minPrice))}
             </span>
           </div>
 
@@ -176,11 +184,12 @@ export default function Filter() {
               min={1000}
               max={1000000000}
               autoComplete="off"
+              value={query.maxPrice}
               defaultValue={query.maxPrice}
               onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
             />
             <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
-              {formatPrice(Number(query.maxPrice))}
+              {(query.maxPrice === '' || query.maxPrice === '0') ? '' : formatPrice(Number(query.maxPrice))}
             </span>
           </div>
 

@@ -61,7 +61,7 @@ export default function Chat({
 
   async function fetchChats() {
     try {
-      const res = await axios.get("api/chat/");
+      const res = await axios.get("/api/chat/");
       setChats(res.data.value);
     } catch (error) {
       if (error instanceof AxiosError) {

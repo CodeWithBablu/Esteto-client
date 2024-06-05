@@ -147,7 +147,7 @@ function ProfileUpdatePage() {
       </div>
 
       <div className="sideContainer relative flex flex-col items-center justify-center lg:bg-slate-100">
-        {currUser?.avatar?.includes("<svg") ? (
+        {(!avatar[0] && currUser?.avatar?.includes("<svg")) ? (
           <div
             className="h-[15rem] w-full max-w-[250px]"
             dangerouslySetInnerHTML={{ __html: currUser?.avatar }}

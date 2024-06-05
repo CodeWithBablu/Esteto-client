@@ -46,7 +46,7 @@ export default function Message({
   useEffect(() => {
     const read = async () => {
       try {
-        await axios.post(`api/chat/read/${chatId}`);
+        await axios.post(`/api/chat/read/${chatId}`);
 
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -194,7 +194,7 @@ export default function Message({
     e.preventDefault();
 
     try {
-      const res = await axios.post(`api/message/${chatId}`, {
+      const res = await axios.post(`/api/message/${chatId}`, {
         text: message,
       });
       const updatedMessages = [...messages, res.data.value];
@@ -264,7 +264,7 @@ export default function Message({
                   )}
                 </>
               ) : (
-                <UserCircleIcon className="mx-2 h-10 w-10 text-zinc-600 md:h-12 md:w-12" />
+                <UserCircleIcon className="mx-2 h-10 w-10 text-zinc-400 md:h-12 md:w-12" />
               )}
 
               <div className="flex flex-col">
@@ -273,7 +273,7 @@ export default function Message({
                 </h2>
                 <span className="flex items-center text-sm gap-2 font-poppins text-gray-300">
                   <span className={clsx(
-                    'w-2 h-2 rounded-full animate-pulse bg-green-600',
+                    'w-2 h-2 rounded-full animate-pulse bg-green-500',
                     {
                       'inline-block': isOnline,
                       'hidden': !isOnline
@@ -284,10 +284,10 @@ export default function Message({
             </div>
           )}
 
-          <div ref={containerRef} className="conversationContainer flex h-full flex-1 flex-col scroll-smooth overflow-y-scroll overflow-x-hidden bg-zinc-950/80 px-5 pb-10 font-poppins text-sm font-medium sm:px-10 sm:text-base">
+          <div ref={containerRef} className="conversationContainer bg-zinc-900 flex h-full flex-1 flex-col scroll-smooth overflow-y-scroll overflow-x-hidden bg-zinc-950/80 px-5 pb-10 font-poppins text-sm font-medium sm:px-10 sm:text-base">
 
             <div className=" flex sticky top-5 z-20 justify-center w-full my-3 transition-all duration-300">
-              <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/10 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{stickyDate}</span>
+              <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/20 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{stickyDate}</span>
             </div>
 
             {messages.map((message, index) => {
@@ -300,28 +300,27 @@ export default function Message({
                 <React.Fragment key={index}>
                   {showDateDivider && (
                     <div className={clsx(
-                      "date-divider flex justify-center w-full mb-3 transition-all duration-100 ease-in-out",
+                      "date-divider flex justify-center w-full my-3 transition-all duration-100 ease-in-out",
                       {
                         'invisible': stickyDate === messageDate,
                         'visible': stickyDate !== messageDate,
                       }
                     )} data-date={messageDate}>
-                      <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/10 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{messageDate}</span>
+                      <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/20 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{messageDate}</span>
                     </div>
                   )}
 
                   <div
-                    key={index}
                     className={clsx(
-                      "mt-5 flex w-fit max-w-[90%] flex-col gap-1 py-2 px-3 self-start sm:max-w-[80%] text-left",
+                      "mb-2 flex w-fit max-w-[90%] flex-col gap-1 py-2 px-3 self-start sm:max-w-[80%] text-sm sm:text-base text-left",
                       {
-                        "self-start text-gray-300 rounded-r-xl rounded-t-xl rounded-bl-none bg-zinc-800/80": message.sender !== sender,
-                        "self-end text-gray-50 rounded-l-xl rounded-t-xl rounded-br-none bg-indigo-600": message.sender === sender,
+                        "self-start text-gray-300 rounded-r-xl rounded-b-xl rounded-tl-none bg-zinc-700/30 backdrop-blur-xl": message.sender !== sender,
+                        "self-end text-zinc-100 rounded-l-xl rounded-b-xl rounded-tr-none bg-indigo-600": message.sender === sender,
                       },
                     )}
                   >
 
-                    <p className="w-full whitespace-pre text-sm">
+                    <p className="w-full whitespace-pre-wrap">
                       {message.text}
                       {message.text.length <= 30 &&
                         <span
@@ -335,10 +334,7 @@ export default function Message({
                     {
                       message.text.length > 30 &&
                       <span
-                        className={clsx(" text-stone-400 text-sm shrink-0", {
-                          "self-start": message.sender !== sender,
-                          "self-end": message.sender === sender,
-                        })}
+                        className={clsx(" text-stone-400 text-sm shrink-0 self-end")}
                       >
                         {formatTime(message.createdAt)}
                       </span>

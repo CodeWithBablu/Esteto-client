@@ -1,13 +1,14 @@
 import "../../styles/ui/navbar.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import Chat from "../Profile/Chat";
 import Menu from "./Menu";
-import { UserType, useNotificationStore } from "@/lib";
+import { UserType, toastMessage, useNotificationStore } from "@/lib";
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
+import axios, { AxiosError } from "axios";
 
 export default function Navbar() {
   const refs = useRef({
@@ -15,9 +16,14 @@ export default function Navbar() {
     chatTriggerRef: null as HTMLDivElement | null,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currUser } = useContext(AuthContext) as { currUser: UserType | null };
+  const { currUser, updateUser } = useContext(AuthContext) as {
+    currUser: UserType | null;
+    updateUser: (data: UserType | null) => void;
+  };
   const { count, fetch } = useNotificationStore();
   const { isChatOpen, isMessageOpen, setChatOpen, setMessageOpen } = useContext(ChatContext);
+  const navigate = useNavigate();
+
 
   console.log(count);
   useEffect(() => {
@@ -40,6 +46,21 @@ export default function Navbar() {
     };
   }, [fetch, currUser, count, setChatOpen, setMessageOpen]);
 
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+      localStorage.removeItem("user");
+      updateUser(null);
+      toastMessage("success", "Logout successfully", 4000);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AxiosError) {
+        toastMessage("error", error.response?.data.message, 5000);
+      } else toastMessage("error", "Failed to log out", 5000);
+    }
+  };
 
   const location = useLocation();
 
@@ -148,9 +169,9 @@ export default function Navbar() {
             {currUser ? (
               <>
                 <a href="/profile">Profile</a>
-                <a className="mt-5 text-red-500" href="/profile">
+                <span onClick={logout} className="mt-5 text-red-500">
                   Logout
-                </a>
+                </span>
               </>
             ) : (
               <>

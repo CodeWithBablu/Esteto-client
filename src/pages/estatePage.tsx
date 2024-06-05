@@ -9,6 +9,8 @@ import { Estate, UserType, toastMessage } from "@/lib";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import axios, { AxiosError } from "axios";
+import clsx from "clsx";
+import { ChatContext } from "@/context/ChatContext";
 
 const Loader = (
   <svg
@@ -30,6 +32,8 @@ export default function EstatePage() {
     currUser: UserType | null;
     updateUser: (data: UserType | null) => void;
   };
+  const { setChatOpen } = useContext(ChatContext);
+
   const navigate = useNavigate();
 
   const handleSave = async () => {
@@ -44,11 +48,29 @@ export default function EstatePage() {
 
       if (error instanceof AxiosError) {
         toastMessage("error", error.response?.data.message, 4000);
-      } else toastMessage("error", "error occured. Try again", 4000);
+      } else toastMessage("error", "Failed to save. Try again", 4000);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleChat = async () => {
+    setIsLoading(true);
+    if (!currUser) navigate("/login");
+    try {
+      const res = await axios.post("/api/chat/addchat", { recieverId: estate.user._id, postId: estate._id });
+      // toastMessage("success", res.data.message, 4000);
+      console.log(res.data);
+      setChatOpen(true);
+    } catch (error) {
+
+      if (error instanceof AxiosError) {
+        toastMessage("error", error.response?.data.message, 4000);
+      } else toastMessage("error", "Unable to open chat. Please refresh the page and try again.", 4000);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="estatePage no-scrollbar font-poppins">
@@ -207,8 +229,11 @@ export default function EstatePage() {
             </div>
           </div>
 
-          <div className="icons flex justify-between">
-            <div className="flex cursor-pointer items-center gap-3 rounded-md border border-zinc-400 px-2 py-1 transition-all duration-300 ease-linear hover:scale-95 hover:opacity-60 lg:border-zinc-600">
+          <div className={clsx(
+            "icons flex justify-between",
+            { 'hidden': estate.user._id === currUser?._id }
+          )}>
+            <div onClick={handleChat} className="flex cursor-pointer items-center gap-3 rounded-md border border-zinc-400 px-2 py-1 transition-all duration-300 ease-linear hover:scale-95 hover:opacity-60 lg:border-zinc-600">
               <img className="icon" src="/assets/icons/chat2.png" alt="chat" />
               <span className="text-lg font-medium text-gray-800">chat</span>
             </div>

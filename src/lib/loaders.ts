@@ -25,7 +25,9 @@ export const singlePageLoader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export const listPageLoader = async ({ request }: LoaderFunctionArgs) => {
-  const query = request.url.split("?")[1];
+  let query = request.url.split("?")[1];
+  if (!query)
+    query = `city=&type=&property=&bedroom=&minPrice=&maxPrice=`
   const res = axios.get(`/api/post?${query}`);
 
   return defer({
