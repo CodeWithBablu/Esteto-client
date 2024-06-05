@@ -2,6 +2,30 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    // dev specific config
+    base: '/',
+    server: {
+      host: "0.0.0.0",
+      proxy: {
+        "/api": {
+          target: env.VITE_BACKEND_URL,
+          secure: false,
+        },
+      },
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    plugins: [react()],
+  }
+});
+
+
 // // https://vitejs.dev/config/
 // export default defineConfig({
 //   server: {
@@ -20,26 +44,3 @@ import path from "path";
 //   },
 //   plugins: [react()],
 // });
-
-
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  return {
-    // dev specific config
-    server: {
-      host: "0.0.0.0",
-      proxy: {
-        "/api": {
-          target: env.VITE_BACKEND_URL,
-          secure: false,
-        },
-      },
-    },
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
-      },
-    },
-    plugins: [react()],
-  }
-})
