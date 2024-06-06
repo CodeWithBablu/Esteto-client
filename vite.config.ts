@@ -4,16 +4,18 @@ import path from "path";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  console.log(env.VITE_BACKEND_URL);
   return {
     // dev specific config
     base: '/',
     server: {
       host: "0.0.0.0",
       proxy: {
-        "/api": {
+        '/api': {
           target: env.VITE_BACKEND_URL,
+          changeOrigin: true,
           secure: false,
-        },
+        }
       },
     },
     resolve: {

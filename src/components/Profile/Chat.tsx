@@ -169,7 +169,7 @@ export default function Chat({
                 },
               )}
             >
-              {chats ? (
+              {(chats && chats.length > 0) ? (
                 <>
                   {chats.map((chat, index) => {
                     const receiver = chat.participants.filter(
@@ -292,9 +292,10 @@ export default function Chat({
                   })}
                 </>
               ) : (
-                <span className="text-center text-gray-400">
-                  **Nothing to show
-                </span>
+                <div className="text-center flex flex-col h-full items-center justify-center gap-5 text-gray-400">
+                  <span className="text-lg">Chat room's on vacation, empty vibes!!</span>
+                  <img src="/assets/icons/notification.png" className="w-[50%] h-[50%] object-contain" alt="chat" />
+                </div>
               )}
             </div>
           </div>
