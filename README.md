@@ -107,7 +107,7 @@ env file setup for backend
 ```
 
 **Continue with backend part here**
-![Backend repo](https://github.com/CodeWithBablu/Esteto-API.git)
+<b>[Backend repo](https://github.com/CodeWithBablu/Esteto-API.git)</b>
 
 <h2>💻 Built with</h2>
 
