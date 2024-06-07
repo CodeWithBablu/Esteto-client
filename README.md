@@ -6,7 +6,14 @@
 
 <h2>🚀 Here is little peak into my adventure</h2>
 
-<b>[Live Demo](https://github.com/CodeWithBablu/Esteto-frontend/assets/59352323/81e975a6-49d3-40c1-967e-0567bbe4b653)</b>
+<p>
+  API needs to be up and running first. Click the backend api wait for it to be up and running.
+  Then move along with LIVE demo link
+</p>
+
+<b>[Backend-API](https://esteto-api.onrender.com)</b>
+
+<b>[Live Demo](esteto-client.vercel.app)</b>
 
 https://github.com/CodeWithBablu/Esteto-frontend/assets/59352323/81e975a6-49d3-40c1-967e-0567bbe4b653
 
@@ -35,6 +42,10 @@ https://github.com/CodeWithBablu/Esteto-frontend/assets/59352323/81e975a6-49d3-4
 <br><br> Create new post page (sell property)  </b><br>
 
 ![newPostPage](https://github.com/CodeWithBablu/Esteto-frontend/assets/59352323/e3b68990-a60e-473c-af1d-a119f3ef3b3c)
+
+<br><br> Serach and set property location (Modal)  </b><br>
+
+![Address](https://github.com/CodeWithBablu/Esteto/assets/59352323/c153e948-8467-4342-b87b-5e76b8726d57)
 
 <br><br> Profile Page  </b><br>
 
