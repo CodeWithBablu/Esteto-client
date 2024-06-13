@@ -20,34 +20,38 @@ const validTypes = ["buy", "rent"];
 
 export default function Filter() {
   const [searchParams] = useSearchParams();
-  const [city, setCity] = useState<City | null>(null)
-
+  const [city, setCity] = useState<City | null>(null);
 
   const [query, setQuery] = useState<IFormInput>({
     city: searchParams.get("city") || "",
     type: searchParams.get("type") || "",
     property: searchParams.get("property") || "",
-    bedroom: (searchParams.get("bedroom") === '0' ? "" : searchParams.get("bedroom")) || "",
+    bedroom:
+      (searchParams.get("bedroom") === "0"
+        ? ""
+        : searchParams.get("bedroom")) || "",
     minPrice: searchParams.get("minPrice") || "1000",
     maxPrice: searchParams.get("maxPrice") || "1000000000",
   });
 
   useEffect(() => {
-
     const cityParams: City = {
       city: searchParams.get("city") as string,
       coordinates: {
         lon: parseFloat(searchParams.get("lon") as string),
         lat: parseFloat(searchParams.get("lat") as string),
-      }
-    }
+      },
+    };
 
-    if (cityParams.city && cityParams.coordinates.lat && cityParams.coordinates.lon && !city) {
+    if (
+      cityParams.city &&
+      cityParams.coordinates.lat &&
+      cityParams.coordinates.lon &&
+      !city
+    ) {
       setCity(cityParams);
     }
-
-  }, [city, searchParams])
-
+  }, [city, searchParams]);
 
   const { setCityState } = useCityStore();
   const navigate = useNavigate();
@@ -57,9 +61,17 @@ export default function Filter() {
   ) => {
     setQuery((prev) => ({
       ...prev,
-      minPrice: validTypes.includes(e.target.value) ? pricelimit[e.target.value as ("buy" | "rent")].min.toFixed(0) as string : '1000',
-      maxPrice: validTypes.includes(e.target.value) ? pricelimit[e.target.value as ("buy" | "rent")].max.toFixed(0) as string : '1000000000',
-      [e.target.name]: e.target.value
+      minPrice: validTypes.includes(e.target.value)
+        ? (pricelimit[e.target.value as "buy" | "rent"].min.toFixed(
+            0,
+          ) as string)
+        : "1000",
+      maxPrice: validTypes.includes(e.target.value)
+        ? (pricelimit[e.target.value as "buy" | "rent"].max.toFixed(
+            0,
+          ) as string)
+        : "1000000000",
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -69,26 +81,40 @@ export default function Filter() {
     const data: IFormInput = {
       type: query.type,
       property: query.property,
-      bedroom: query.bedroom !== '0' ? query.bedroom : "",
-      minPrice: (query.minPrice as string) === '' ? "1000" : query.minPrice,
-      maxPrice: (query.maxPrice as string) === '' ? "1000000000" : query.maxPrice,
+      bedroom: query.bedroom !== "0" ? query.bedroom : "",
+      minPrice: (query.minPrice as string) === "" ? "1000" : query.minPrice,
+      maxPrice:
+        (query.maxPrice as string) === "" ? "1000000000" : query.maxPrice,
     };
 
     if (!city) {
-      toastMessage("alert", "Type in the city name to begin your property search 😅", 4000)
+      toastMessage(
+        "alert",
+        "Type in the city name to begin your property search 😅",
+        4000,
+      );
       return;
     }
 
     if (Number(data.minPrice) > Number(data.maxPrice)) {
-      toastMessage("alert", "The minimum price must be lower than the maximum price 😅", 4000)
+      toastMessage(
+        "alert",
+        "The minimum price must be lower than the maximum price 😅",
+        4000,
+      );
       return;
     }
 
     if (city)
-      setCityState({ city: city.city, coordinates: { lat: city.coordinates.lat, lon: city.coordinates.lon } });
+      setCityState({
+        city: city.city,
+        coordinates: { lat: city.coordinates.lat, lon: city.coordinates.lon },
+      });
 
-    navigate(`/list?city=${city.city}&type=${data.type}&property=${data.property}&bedroom=${data.bedroom !== '0' ? data.bedroom : ""}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&lat=${city ? city.coordinates.lat : ""}&lon=${city ? city.coordinates.lon : ""}`);
-  }
+    navigate(
+      `/list?city=${city.city}&type=${data.type}&property=${data.property}&bedroom=${data.bedroom !== "0" ? data.bedroom : ""}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&lat=${city ? city.coordinates.lat : ""}&lon=${city ? city.coordinates.lon : ""}`,
+    );
+  };
 
   return (
     <div className="filter">
@@ -98,12 +124,11 @@ export default function Filter() {
       </h1>
 
       <form onSubmit={handleSubmit}>
-
-
         <div className=" grid grid-flow-row grid-cols-2 gap-x-2 gap-y-5 md:grid-cols-3 md:gap-y-3">
-
           <div className="item">
-            <label htmlFor="city">City <span className="text-rose-500">*</span></label>
+            <label htmlFor="city">
+              City <span className="text-rose-500">*</span>
+            </label>
             <PlaceModal type="city" data={city} setData={setCity} />
           </div>
 
@@ -154,7 +179,7 @@ export default function Filter() {
           <div className="item relative col-span-2 md:col-span-1">
             <label htmlFor="minPrice">Min Price</label>
             <input
-              className="relative remove-arrow"
+              className="remove-arrow relative"
               onChange={handleChange}
               type="number"
               name="minPrice"
@@ -165,17 +190,26 @@ export default function Filter() {
               autoComplete="off"
               value={query.minPrice}
               defaultValue={query.minPrice}
-              onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
+              onKeyDown={(e) =>
+                handleKeyDown(
+                  e,
+                  query.type === ""
+                    ? 1000000000
+                    : pricelimit[query.type as "buy" | "rent"].max,
+                )
+              }
             />
-            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
-              {(query.minPrice === '' || query.minPrice === '0') ? '' : formatPrice(Number(query.minPrice))}
+            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-zinc-400 shadow-xl">
+              {query.minPrice === "" || query.minPrice === "0"
+                ? ""
+                : formatPrice(Number(query.minPrice))}
             </span>
           </div>
 
           <div className="item relative col-span-2 md:col-span-1">
             <label htmlFor="maxPrice">Max Price</label>
             <input
-              className="relative remove-arrow"
+              className="remove-arrow relative"
               onChange={handleChange}
               type="number"
               name="maxPrice"
@@ -186,13 +220,21 @@ export default function Filter() {
               autoComplete="off"
               value={query.maxPrice}
               defaultValue={query.maxPrice}
-              onKeyDown={(e) => handleKeyDown(e, query.type === "" ? 1000000000 : pricelimit[query.type as ("buy" | "rent")].max)}
+              onKeyDown={(e) =>
+                handleKeyDown(
+                  e,
+                  query.type === ""
+                    ? 1000000000
+                    : pricelimit[query.type as "buy" | "rent"].max,
+                )
+              }
             />
-            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-zinc-400 font-medium px-2 shadow-xl">
-              {(query.maxPrice === '' || query.maxPrice === '0') ? '' : formatPrice(Number(query.maxPrice))}
+            <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-zinc-400 shadow-xl">
+              {query.maxPrice === "" || query.maxPrice === "0"
+                ? ""
+                : formatPrice(Number(query.maxPrice))}
             </span>
           </div>
-
         </div>
 
         <button

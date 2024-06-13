@@ -10,7 +10,15 @@ import {
 } from "@heroicons/react/24/outline";
 
 import axios, { AxiosError } from "axios";
-import { Address, City, UserType, Viewport, errorHandler, handleKeyDown, toastMessage } from "@/lib";
+import {
+  Address,
+  City,
+  UserType,
+  Viewport,
+  errorHandler,
+  handleKeyDown,
+  toastMessage,
+} from "@/lib";
 import { useContext, useEffect, useState } from "react";
 import clsx from "clsx";
 import { AuthContext } from "@/context/AuthContext";
@@ -26,7 +34,6 @@ const Loader = (
     <path d="M3.05469 13H5.07065C5.55588 16.3923 8.47329 19 11.9998 19C15.5262 19 18.4436 16.3923 18.9289 13H20.9448C20.4474 17.5 16.6323 21 11.9998 21C7.36721 21 3.55213 17.5 3.05469 13ZM3.05469 11C3.55213 6.50005 7.36721 3 11.9998 3C16.6323 3 20.4474 6.50005 20.9448 11H18.9289C18.4436 7.60771 15.5262 5 11.9998 5C8.47329 5 5.55588 7.60771 5.07065 11H3.05469Z"></path>
   </svg>
 );
-
 
 interface IFormInput {
   title: string;
@@ -53,7 +60,7 @@ interface IFormInput {
 }
 
 interface Query {
-  type: 'buy' | 'rent'
+  type: "buy" | "rent";
   price: string;
   school: string;
   bus: string;
@@ -76,9 +83,9 @@ function NewPostPage() {
   const [query, setQuery] = useState<Query>({
     type: "rent",
     price: "1000",
-    school: '',
-    bus: '',
-    restaurant: '',
+    school: "",
+    bus: "",
+    restaurant: "",
   });
 
   const [city, setCity] = useState<City | null>(null);
@@ -112,8 +119,14 @@ function NewPostPage() {
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setQuery((prev) => ({ ...prev, price: pricelimit[query.type].min.toFixed(0), [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    setQuery((prev) => ({
+      ...prev,
+      price: pricelimit[query.type].min.toFixed(0),
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const onclick = () => {
@@ -126,7 +139,7 @@ function NewPostPage() {
 
     if (images.length === 0) {
       errorCount--;
-      errorMessage += `images : No pics? No property peek!\n`
+      errorMessage += `images : No pics? No property peek!\n`;
     }
 
     if (!city || !address) {
@@ -147,15 +160,35 @@ function NewPostPage() {
     setError("");
     setIsLoading(true);
     try {
-      if (desc.length === 0 || desc === "<p><br></p>") throw new Error("desc required");
+      if (desc.length === 0 || desc === "<p><br></p>")
+        throw new Error("desc required");
 
       if (images.length === 0) throw new Error("upload images");
 
       if (!city || !address) throw new Error("address not specified");
 
-      const { bedroom, bathroom, property, price, title, type, size, utilities, pet, income, school, bus, restaurant } = data;
-      const { city: cityName, place, latitude: lat, longitude: log } = address as Address;
-      console.log(bedroom);
+      const {
+        bedroom,
+        bathroom,
+        property,
+        price,
+        title,
+        type,
+        size,
+        utilities,
+        pet,
+        income,
+        school,
+        bus,
+        restaurant,
+      } = data;
+      const {
+        city: cityName,
+        place,
+        latitude: lat,
+        longitude: log,
+      } = address as Address;
+
       const body = {
         post: {
           title,
@@ -185,7 +218,6 @@ function NewPostPage() {
       toastMessage("success", res.data.message, 4000);
       navigate("/profile");
     } catch (error) {
-
       if (error instanceof AxiosError) {
         setError(error.response?.data.message);
       } else setError(errorHandler(error, "Failed to add post") as string);
@@ -229,7 +261,9 @@ function NewPostPage() {
                 name="type"
                 onChange={handleChange}
               >
-                <option value="rent" defaultChecked>Rent</option>
+                <option value="rent" defaultChecked>
+                  Rent
+                </option>
                 <option value="buy">Buy</option>
               </select>
             </div>
@@ -251,7 +285,9 @@ function NewPostPage() {
                 Price <span className="text-rose-500">*</span>
               </label>
               <input
-                {...register("price", { required: "price required. 1000-100Cr" })}
+                {...register("price", {
+                  required: "price required. 1000-100Cr",
+                })}
                 aria-invalid={errors.price ? "true" : "false"}
                 onChange={handleChange}
                 className="remove-arrow"
@@ -264,8 +300,10 @@ function NewPostPage() {
                 autoComplete="off"
                 onKeyDown={(e) => handleKeyDown(e, pricelimit[query.type].max)}
               />
-              <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
-                {(query.price === '' || query.price === '0') ? '' : formatPrice(Number(query.price))}
+              <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-indigo-400/90 shadow-xl">
+                {query.price === "" || query.price === "0"
+                  ? ""
+                  : formatPrice(Number(query.price))}
               </span>
             </div>
 
@@ -292,7 +330,9 @@ function NewPostPage() {
                 Bathroom count <span className="text-rose-500">*</span>
               </label>
               <input
-                {...register("bathroom", { required: "bathroom required. 1-10" })}
+                {...register("bathroom", {
+                  required: "bathroom required. 1-10",
+                })}
                 aria-invalid={errors.bathroom ? "true" : "false"}
                 min={1}
                 max={10}
@@ -305,7 +345,6 @@ function NewPostPage() {
               />
             </div>
 
-
             <div className="item description">
               <label htmlFor="desc">
                 Description <span className="text-rose-500">*</span>
@@ -313,9 +352,10 @@ function NewPostPage() {
               <ReactQuill theme="snow" onChange={setDesc} value={desc} />
             </div>
 
-
             <div className="item h-full">
-              <label htmlFor="city">City <span className="text-rose-500">*</span></label>
+              <label htmlFor="city">
+                City <span className="text-rose-500">*</span>
+              </label>
               <PlaceModal type="city" data={city} setData={setCity} />
             </div>
 
@@ -338,7 +378,9 @@ function NewPostPage() {
               </label>
               <div className="relative flex w-full items-center">
                 <input
-                  {...register("size", { required: "Built up area required. 150-15000 sq.ft" })}
+                  {...register("size", {
+                    required: "Built up area required. 150-15000 sq.ft",
+                  })}
                   min={150}
                   max={15000}
                   step={1}
@@ -346,14 +388,13 @@ function NewPostPage() {
                   id="size"
                   name="size"
                   type="number"
-                  onKeyDown={(e) => handleKeyDown(e, 15000, 'Sq.ft', 150)}
+                  onKeyDown={(e) => handleKeyDown(e, 15000, "Sq.ft", 150)}
                 />
-                <span className="absolute bottom-[5px] right-[1px] flex flex-col h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
+                <span className="absolute bottom-[5px] right-[1px] flex h-5 flex-col items-center rounded-l-[5px] border-none px-2 font-medium text-indigo-400/90 shadow-xl">
                   Sq.ft
                 </span>
               </div>
             </div>
-
 
             <div className="item">
               <label htmlFor="utilities">Utilities Policy</label>
@@ -402,10 +443,12 @@ function NewPostPage() {
                   id="school"
                   name="school"
                   type="number"
-                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
+                  onKeyDown={(e) => handleKeyDown(e, 20000, "m", 50)}
                 />
-                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
-                  {(query.school === '' || query.school === '0') ? '' : formatDistance(Number(query.school))}
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-indigo-400/90 shadow-xl">
+                  {query.school === "" || query.school === "0"
+                    ? ""
+                    : formatDistance(Number(query.school))}
                 </span>
               </div>
             </div>
@@ -422,10 +465,12 @@ function NewPostPage() {
                   id="bus"
                   name="bus"
                   type="number"
-                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
+                  onKeyDown={(e) => handleKeyDown(e, 20000, "m", 50)}
                 />
-                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
-                  {(query.bus === '' || query.bus === '0') ? '' : formatDistance(Number(query.bus))}
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-indigo-400/90 shadow-xl">
+                  {query.bus === "" || query.bus === "0"
+                    ? ""
+                    : formatDistance(Number(query.bus))}
                 </span>
               </div>
             </div>
@@ -442,10 +487,12 @@ function NewPostPage() {
                   id="restaurant"
                   name="restaurant"
                   type="number"
-                  onKeyDown={(e) => handleKeyDown(e, 20000, 'm', 50)}
+                  onKeyDown={(e) => handleKeyDown(e, 20000, "m", 50)}
                 />
-                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none text-indigo-400/90 font-medium px-2 shadow-xl">
-                  {(query.restaurant === '' || query.restaurant === '0') ? '' : formatDistance(Number(query.restaurant))}
+                <span className="absolute bottom-[1px] right-[1px] flex h-5 items-center rounded-l-[5px] border-none px-2 font-medium text-indigo-400/90 shadow-xl">
+                  {query.restaurant === "" || query.restaurant === "0"
+                    ? ""
+                    : formatDistance(Number(query.restaurant))}
                 </span>
               </div>
             </div>
@@ -483,10 +530,8 @@ function NewPostPage() {
       </div>
 
       <div className="sideContainer relative flex flex-col items-center justify-center lg:bg-slate-100">
-
-        <div className="absolute top-[20%] z-0 xl:top-[10%] hidden lg:inline-block h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-teal-500/40 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
-        <div className="animation-delay-7000 z-0 hidden lg:inline-block absolute left-[10%] top-[30%] h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-indigo-500/50 blur-2xl filter xl:h-[25rem] xl:w-[25rem]"></div>
-
+        <div className="absolute top-[20%] z-0 hidden h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-teal-500/40 blur-2xl filter lg:inline-block xl:top-[10%] xl:h-[25rem] xl:w-[25rem]"></div>
+        <div className="animation-delay-7000 absolute left-[10%] top-[30%] z-0 hidden h-[15rem] w-[15rem] animate-blob rounded-full bg-gradient-radial from-indigo-500/50 blur-2xl filter lg:inline-block xl:h-[25rem] xl:w-[25rem]"></div>
 
         <div className="smallImages relative flex h-[200px] w-[300px] items-center sm:h-[250px] sm:w-[300px] sm:justify-center">
           <div

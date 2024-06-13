@@ -58,19 +58,24 @@ export default function EstatePage() {
     setIsLoading(true);
     if (!currUser) navigate("/login");
     try {
-      const res = await axios.post("/api/chat/addchat", { recieverId: estate.user._id, postId: estate._id });
-      // toastMessage("success", res.data.message, 4000);
-      console.log(res.data);
+      await axios.post("/api/chat/addchat", {
+        recieverId: estate.user._id,
+        postId: estate._id,
+      });
       setChatOpen(true);
     } catch (error) {
-
       if (error instanceof AxiosError) {
         toastMessage("error", error.response?.data.message, 4000);
-      } else toastMessage("error", "Unable to open chat. Please refresh the page and try again.", 4000);
+      } else
+        toastMessage(
+          "error",
+          "Unable to open chat. Please refresh the page and try again.",
+          4000,
+        );
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="estatePage no-scrollbar font-poppins">
@@ -84,7 +89,7 @@ export default function EstatePage() {
                   {estate.title}
                 </h1>
                 <div className="address">
-                  <MapIcon className="w-5 h-5 shrink-0" />
+                  <MapIcon className="h-5 w-5 shrink-0" />
                   <span>{estate.address}</span>
                 </div>
                 <span className="price">₹ {estate.price}</span>
@@ -122,12 +127,11 @@ export default function EstatePage() {
             </div>
 
             <div
-              className="bottom bg-slate-100 p-3 rounded-xl list-disc list-inside"
+              className="bottom prose list-inside list-disc rounded-xl bg-slate-100 p-3"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(estate.postdetail.desc),
               }}
             ></div>
-
           </div>
         </div>
       </div>
@@ -165,7 +169,7 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Room Sizes</p>
-            <div className="listHorizontal flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-r from-blue-100 to-stone-200 shadow-lg shadow-gray-300 p-3">
+            <div className="listHorizontal flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-r from-blue-100 to-stone-200 p-3 shadow-lg shadow-gray-300">
               <div className="size">
                 <img src="/assets/icons/size.png" alt="size" />
                 <span>{estate.postdetail.size} sqft</span>
@@ -195,11 +199,13 @@ export default function EstatePage() {
 
           <div>
             <p className="title">Nearby Places</p>
-            <div className="places flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-br from-gray-200 to-teal-100 shadow-lg shadow-gray-300 p-3">
+            <div className="places flex flex-row justify-between gap-3 rounded-xl bg-gradient-to-br from-gray-200 to-teal-100 p-3 shadow-lg shadow-gray-300">
               <div className="place flex flex-row items-center gap-2">
                 <img src="/assets/icons/school.png" alt="school" />
                 <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
-                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">School</span>
+                  <span className=" hidden font-[500] sm:inline-block lg:hidden xl:inline-block">
+                    School
+                  </span>
                   <p>{estate.postdetail.school}</p>
                 </div>
               </div>
@@ -207,7 +213,9 @@ export default function EstatePage() {
               <div className="place flex flex-row items-center gap-3">
                 <img src="/assets/icons/bus.png" alt="bus" />
                 <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
-                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">Bus Stop</span>
+                  <span className=" hidden font-[500] sm:inline-block lg:hidden xl:inline-block">
+                    Bus Stop
+                  </span>
                   <p>{estate.postdetail.bus}</p>
                 </div>
               </div>
@@ -215,7 +223,9 @@ export default function EstatePage() {
               <div className="place flex flex-row items-center gap-3">
                 <img src="/assets/icons/restaurant.png" alt="Restaurant" />
                 <div className="placeText flex w-full max-w-[200px] flex-col items-start justify-between gap-3 sm:gap-1">
-                  <span className=" font-[500] hidden sm:inline-block lg:hidden xl:inline-block">Restaurant</span>
+                  <span className=" hidden font-[500] sm:inline-block lg:hidden xl:inline-block">
+                    Restaurant
+                  </span>
                   <p>{estate.postdetail.restaurant}</p>
                 </div>
               </div>
@@ -229,11 +239,15 @@ export default function EstatePage() {
             </div>
           </div>
 
-          <div className={clsx(
-            "icons flex justify-between",
-            { 'hidden': estate.user._id === currUser?._id }
-          )}>
-            <div onClick={handleChat} className="flex cursor-pointer items-center gap-3 rounded-md border border-zinc-400 px-2 py-1 transition-all duration-300 ease-linear hover:scale-95 hover:opacity-60 lg:border-zinc-600">
+          <div
+            className={clsx("icons flex justify-between", {
+              hidden: estate.user._id === currUser?._id,
+            })}
+          >
+            <div
+              onClick={handleChat}
+              className="flex cursor-pointer items-center gap-3 rounded-md border border-zinc-400 px-2 py-1 transition-all duration-300 ease-linear hover:scale-95 hover:opacity-60 lg:border-zinc-600"
+            >
               <img className="icon" src="/assets/icons/chat2.png" alt="chat" />
               <span className="text-lg font-medium text-gray-800">chat</span>
             </div>

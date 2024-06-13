@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { City } from "./definations";
 
 interface CityState {
-  city: City | null
+  city: City | null;
   setCityState: (city: City) => void;
 }
 

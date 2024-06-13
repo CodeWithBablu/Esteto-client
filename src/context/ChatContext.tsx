@@ -11,8 +11,8 @@ interface ChatContextProps {
 export const ChatContext = createContext<ChatContextProps>({
   isChatOpen: false,
   isMessageOpen: false,
-  setChatOpen: () => { },
-  setMessageOpen: () => { },
+  setChatOpen: () => {},
+  setMessageOpen: () => {},
 });
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
@@ -20,7 +20,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isMessageOpen, setMessageOpen] = useState<boolean>(false);
 
   return (
-    <ChatContext.Provider value={{ isChatOpen, isMessageOpen, setChatOpen, setMessageOpen }}>
+    <ChatContext.Provider
+      value={{ isChatOpen, isMessageOpen, setChatOpen, setMessageOpen }}
+    >
       {children}
     </ChatContext.Provider>
   );

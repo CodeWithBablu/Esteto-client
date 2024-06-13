@@ -10,7 +10,7 @@ export default function ListPage() {
   const res = useLoaderData() as { posts: Promise<EstateRaw[]> };
 
   return (
-    <div className="listPage font-poppins mb-10">
+    <div className="listPage mb-10 font-poppins">
       <div className="listContainer no-scrollbar">
         <div className="wrapper no-scrollbar flex h-full flex-col justify-start gap-3 pt-10 sm:gap-10">
           <Filter />
@@ -25,22 +25,41 @@ export default function ListPage() {
             <Await
               resolve={res.posts}
               errorElement={
-                <div className=" w-full flex flex-col items-center">
-                  <span className="text-xl font-chillax font-medium animate-pulse">Some technical glitch occured</span>
-                  <img src="/assets/icons/oops.png" alt="search" className="h-[15rem] w-[15rem] object-contain" />
-                </div>}
-            >
-              {(postResponse: { data: { value: EstateRaw[] } }) => {
-                console.log(postResponse.data);
-                if (postResponse.data.value.length > 0)
-                  return <List listData={postResponse.data.value} btnDisabled={false} />;
-                else
-                  return (<div className=" w-full flex flex-col items-center">
-                    <span className="text-2xl font-chillax font-medium animate-pulse">No property found</span>
-                    <img src="/assets/icons/search.gif" alt="search" className="h-[20rem] w-[20rem] md:h-[25rem] md:w-[25rem] object-cover" />
-                  </div>
-                  )
+                <div className=" flex w-full flex-col items-center">
+                  <span className="animate-pulse font-chillax text-xl font-medium">
+                    Some technical glitch occured
+                  </span>
+                  <img
+                    src="/assets/icons/oops.png"
+                    alt="search"
+                    className="h-[15rem] w-[15rem] object-contain"
+                  />
+                </div>
               }
+            >
+              {
+                (postResponse: { data: { value: EstateRaw[] } }) => {
+                  if (postResponse.data.value.length > 0)
+                    return (
+                      <List
+                        listData={postResponse.data.value}
+                        btnDisabled={false}
+                      />
+                    );
+                  else
+                    return (
+                      <div className=" flex w-full flex-col items-center">
+                        <span className="animate-pulse font-chillax text-2xl font-medium">
+                          No property found
+                        </span>
+                        <img
+                          src="/assets/icons/search.gif"
+                          alt="search"
+                          className="h-[20rem] w-[20rem] object-cover md:h-[25rem] md:w-[25rem]"
+                        />
+                      </div>
+                    );
+                }
                 // postResponse.data.value.map((estate) => (
                 //   // <Card key={estate._id} item={estate} btnDisabled={false} />
                 // ))
@@ -51,7 +70,7 @@ export default function ListPage() {
       </div>
 
       <div className="mapContainer relative bg-slate-100">
-        <div className="h-full lg:h-[70%] xl:h-[90%] w-full overflow-hidden rounded-2xl lg:rounded-t-2xl">
+        <div className="h-full w-full overflow-hidden rounded-2xl lg:h-[70%] lg:rounded-t-2xl xl:h-[90%]">
           <Suspense fallback={<MapSkeleton loading={true} />}>
             <Await
               resolve={res.posts}
@@ -59,9 +78,8 @@ export default function ListPage() {
             >
               {(postResponse: { data: { value: EstateRaw[] } }) => {
                 if (postResponse.data.value.length > 0)
-                  return <Map data={postResponse.data.value} />
-                else
-                  return <MapSkeleton loading={false} />
+                  return <Map data={postResponse.data.value} />;
+                else return <MapSkeleton loading={false} />;
               }}
             </Await>
           </Suspense>

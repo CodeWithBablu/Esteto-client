@@ -1,4 +1,12 @@
-import { UserType, errorHandler, formatLastSeen, formatMessageDate, formatTime, toastMessage, useNotificationStore } from "@/lib";
+import {
+  UserType,
+  errorHandler,
+  formatLastSeen,
+  formatMessageDate,
+  formatTime,
+  toastMessage,
+  useNotificationStore,
+} from "@/lib";
 import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
@@ -28,8 +36,7 @@ export default function Message({
   setMessageOpen: (state: boolean) => void;
   chatInfo: { sender: string; receiver: UserType | null; chatId: string };
 }) {
-
-  const [stickyDate, setStickyDate] = useState('');
+  const [stickyDate, setStickyDate] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState("");
   const [isOnline, setIsOnline] = useState(false);
@@ -47,12 +54,10 @@ export default function Message({
     const read = async () => {
       try {
         await axios.post(`/api/chat/read/${chatId}`);
-
       } catch (error) {
         if (error instanceof AxiosError) {
           toastMessage("error", error.response?.data.message, 4000);
         } else toastMessage("error", "Failed to read message", 4000);
-
       }
     };
 
@@ -72,7 +77,6 @@ export default function Message({
 
     if (socket) {
       socket.on("getMessage", async (data) => {
-        console.log("Hello");
         if (isMessageOpen && chatId === data.chatId) {
           setMessages((prev) => [...prev, data]);
           read();
@@ -85,7 +89,6 @@ export default function Message({
 
       if (isMessageOpen && receiver) {
         socket.emit("getUserStatus", receiver._id as string);
-        console.log(formatLastSeen(receiver.lastSeenAt));
       }
     }
 
@@ -110,59 +113,27 @@ export default function Message({
       const container = containerRef.current;
       if (container) {
         const parentRect = container.getBoundingClientRect();
-        const chatDividers = container.querySelectorAll<HTMLDivElement>('.date-divider');
+        const chatDividers =
+          container.querySelectorAll<HTMLDivElement>(".date-divider");
 
         chatDividers.forEach((divider) => {
           const rect = divider.getBoundingClientRect();
           const top = rect.top - parentRect.top;
-          const bottom = rect.bottom - parentRect.top;
-          console.log(divider.dataset.date, ":", top, bottom);
 
           if (top <= 20) {
-            console.log(divider.dataset.date, ":", top, bottom);
-            setStickyDate(divider.dataset.date || '');
+            setStickyDate(divider.dataset.date || "");
           }
-        })
+        });
       }
     };
 
     const container = containerRef.current;
-    if (container)
-      container.addEventListener('scroll', handleScroll);
+    if (container) container.addEventListener("scroll", handleScroll);
 
     return () => {
-      if (container)
-        container.removeEventListener('scroll', handleScroll);
+      if (container) container.removeEventListener("scroll", handleScroll);
     };
-
   }, [messages, isMessageOpen]);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const container = containerRef.current;
-  //     console.log("Hi");
-  //     if (container) {
-  //       const chatDividers = container.querySelectorAll<HTMLDivElement>('.date-divider');
-
-  //       for (const divider of chatDividers) {
-  //         const rect = divider.getBoundingClientRect();
-  //         if (rect.top <= 0 && rect.bottom >= 0) {
-  //           console.log(divider.dataset.date);
-  //           setStickyDate(divider.dataset.date || '');
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   };
-
-  //   if (containerRef.current)
-  //     containerRef.current.addEventListener('scroll', handleScroll);
-
-  //   // return () => {
-  //   //   if (containerRef.current)
-  //   //     containerRef.current.removeEventListener('scroll', handleScroll);
-  //   // };
-  // }, []);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length === 0 && ref.current) {
@@ -222,7 +193,7 @@ export default function Message({
   return (
     <div
       className={clsx(
-        "messageContainer z-50 absolute left-0 top-0 flex h-full w-full shrink-0 flex-col overflow-hidden bg-zinc-900/90 transition-all duration-300 ease-linear",
+        "messageContainer absolute left-0 top-0 z-50 flex h-full w-full shrink-0 flex-col overflow-hidden bg-zinc-900/90 transition-all duration-300 ease-linear",
         {
           "translate-x-0": isMessageOpen,
           "translate-x-full": !isMessageOpen,
@@ -239,7 +210,7 @@ export default function Message({
             <div className="flex h-[70px] w-full items-center gap-5 self-start bg-zinc-900 px-2 font-chillax shadow-2xl sm:h-[80px] sm:px-5 sm:py-4">
               <ChevronLeftIcon
                 onClick={() => {
-                  setStickyDate('');
+                  setStickyDate("");
                   setMessageOpen(false);
                 }}
                 className="mr-2 w-8 cursor-pointer text-gray-200"
@@ -268,80 +239,98 @@ export default function Message({
               )}
 
               <div className="flex flex-col">
-                <h2 className="text-[20px] font-medium text-gray-50 capitalize">
+                <h2 className="text-[20px] font-medium capitalize text-gray-50">
                   {receiver.username}
                 </h2>
-                <span className="flex items-center text-sm gap-2 font-poppins text-gray-300">
-                  <span className={clsx(
-                    'w-2 h-2 rounded-full animate-pulse bg-green-500',
-                    {
-                      'inline-block': isOnline,
-                      'hidden': !isOnline
-                    })}></span>
-                  {isOnline ? 'online' : formatLastSeen(receiver.lastSeenAt)}
+                <span className="flex items-center gap-2 font-poppins text-sm text-gray-300">
+                  <span
+                    className={clsx(
+                      "h-2 w-2 animate-pulse rounded-full bg-green-500",
+                      {
+                        "inline-block": isOnline,
+                        hidden: !isOnline,
+                      },
+                    )}
+                  ></span>
+                  {isOnline ? "online" : formatLastSeen(receiver.lastSeenAt)}
                 </span>
               </div>
             </div>
           )}
 
-          <div ref={containerRef} className="conversationContainer bg-zinc-900 flex h-full flex-1 flex-col scroll-smooth overflow-y-scroll overflow-x-hidden bg-zinc-950/80 px-5 pb-10 font-poppins text-sm font-medium sm:px-10 sm:text-base">
-
-            <div className=" flex sticky top-5 z-20 justify-center w-full my-3 transition-all duration-300">
-              <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/20 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{stickyDate}</span>
+          <div
+            ref={containerRef}
+            className="conversationContainer flex h-full flex-1 flex-col overflow-x-hidden overflow-y-scroll scroll-smooth bg-zinc-900 bg-zinc-950/80 px-5 pb-10 font-poppins text-sm font-medium sm:px-10 sm:text-base"
+          >
+            <div className=" sticky top-5 z-20 my-3 flex w-full justify-center transition-all duration-300">
+              <span className="rounded-full bg-zinc-900/60 px-3 font-poppins text-[12px] text-orange-500 shadow-lg shadow-orange-500/20 backdrop-blur-xl">
+                {stickyDate}
+              </span>
             </div>
 
             {messages.map((message, index) => {
-
               const messageDate = formatMessageDate(message.createdAt);
-              const prevMessage = index > 0 ? formatMessageDate(messages[index - 1].createdAt) : null;
+              const prevMessage =
+                index > 0
+                  ? formatMessageDate(messages[index - 1].createdAt)
+                  : null;
               const showDateDivider = messageDate !== prevMessage;
 
               return (
                 <React.Fragment key={index}>
                   {showDateDivider && (
-                    <div className={clsx(
-                      "date-divider flex justify-center w-full my-3 transition-all duration-100 ease-in-out",
-                      {
-                        'invisible': stickyDate === messageDate,
-                        'visible': stickyDate !== messageDate,
-                      }
-                    )} data-date={messageDate}>
-                      <span className="text-[12px] font-poppins px-3 shadow-lg shadow-orange-500/20 text-orange-500 bg-zinc-900/60 backdrop-blur-xl rounded-full">{messageDate}</span>
+                    <div
+                      className={clsx(
+                        "date-divider my-3 flex w-full justify-center transition-all duration-100 ease-in-out",
+                        {
+                          invisible: stickyDate === messageDate,
+                          visible: stickyDate !== messageDate,
+                        },
+                      )}
+                      data-date={messageDate}
+                    >
+                      <span className="rounded-full bg-zinc-900/60 px-3 font-poppins text-[12px] text-orange-500 shadow-lg shadow-orange-500/20 backdrop-blur-xl">
+                        {messageDate}
+                      </span>
                     </div>
                   )}
 
                   <div
                     className={clsx(
-                      "mb-2 flex w-fit max-w-[90%] flex-col gap-1 py-2 px-3 self-start sm:max-w-[80%] text-sm sm:text-base text-left",
+                      "mb-2 flex w-fit max-w-[90%] flex-col gap-1 self-start px-3 py-2 text-left text-sm sm:max-w-[80%] sm:text-base",
                       {
-                        "self-start text-gray-300 rounded-r-xl rounded-b-xl rounded-tl-none bg-zinc-700/30 backdrop-blur-xl": message.sender !== sender,
-                        "self-end text-zinc-100 rounded-l-xl rounded-b-xl rounded-tr-none bg-indigo-600": message.sender === sender,
+                        "self-start rounded-b-xl rounded-r-xl rounded-tl-none bg-zinc-700/30 text-gray-300 backdrop-blur-xl":
+                          message.sender !== sender,
+                        "self-end rounded-b-xl rounded-l-xl rounded-tr-none bg-indigo-600 text-zinc-100":
+                          message.sender === sender,
                       },
                     )}
                   >
-
-                    <p className="w-full whitespace-pre-wrap">
+                    <span className="w-full whitespace-pre-wrap">
                       {message.text}
-                      {message.text.length <= 30 &&
+                      {message.text.length <= 30 && (
                         <span
-                          className={clsx(" text-stone-400 text-sm shrink-0 ml-3")}
+                          className={clsx(
+                            " ml-3 shrink-0 text-sm text-stone-400",
+                          )}
                         >
                           {formatTime(message.createdAt)}
                         </span>
-                      }
-                    </p>
+                      )}
+                    </span>
 
-                    {
-                      message.text.length > 30 &&
+                    {message.text.length > 30 && (
                       <span
-                        className={clsx(" text-stone-400 text-sm shrink-0 self-end")}
+                        className={clsx(
+                          " shrink-0 self-end text-sm text-stone-400",
+                        )}
                       >
                         {formatTime(message.createdAt)}
                       </span>
-                    }
-
+                    )}
                   </div>
-                </React.Fragment>)
+                </React.Fragment>
+              );
             })}
 
             <div className="mt-5" ref={messageEndRef} />

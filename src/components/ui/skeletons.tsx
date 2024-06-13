@@ -52,10 +52,16 @@ export function CardSkeleton() {
 export function MapSkeleton({ loading }: { loading: boolean }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-3">
-      <span className={`font-chillax text-2xl font-medium ${loading ? 'inline-block' : 'hidden'}`}>
+      <span
+        className={`font-chillax text-2xl font-medium ${loading ? "inline-block" : "hidden"}`}
+      >
         Loading <span className="inline-block animate-bounce">...</span>
       </span>
-      <img src="/assets/icons/map.gif" className="h-[20rem] w-[20rem] md:h-[25rem] md:w-[25rem] object-cover" alt="" />
+      <img
+        src="/assets/icons/map.gif"
+        className="h-[20rem] w-[20rem] object-cover md:h-[25rem] md:w-[25rem]"
+        alt=""
+      />
     </div>
   );
 }

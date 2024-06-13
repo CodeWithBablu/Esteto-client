@@ -21,11 +21,10 @@ export default function Navbar() {
     updateUser: (data: UserType | null) => void;
   };
   const { count, fetch } = useNotificationStore();
-  const { isChatOpen, isMessageOpen, setChatOpen, setMessageOpen } = useContext(ChatContext);
+  const { isChatOpen, isMessageOpen, setChatOpen, setMessageOpen } =
+    useContext(ChatContext);
   const navigate = useNavigate();
 
-
-  console.log(count);
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (refs.current.chatRef && refs.current.chatTriggerRef)
@@ -113,7 +112,9 @@ export default function Navbar() {
               <Menu />
               <div
                 ref={(el) => (refs.current.chatTriggerRef = el)}
-                onClick={() => { setChatOpen(!isChatOpen) }}
+                onClick={() => {
+                  setChatOpen(!isChatOpen);
+                }}
                 className="relative cursor-pointer"
               >
                 <img
@@ -188,7 +189,12 @@ export default function Navbar() {
           refs.current.chatRef = el;
         }}
       >
-        <Chat isOpen={isChatOpen} isMessageOpen={isMessageOpen} currUser={currUser} setMessageOpen={setMessageOpen} />
+        <Chat
+          isOpen={isChatOpen}
+          isMessageOpen={isMessageOpen}
+          currUser={currUser}
+          setMessageOpen={setMessageOpen}
+        />
       </div>
     </>
   );

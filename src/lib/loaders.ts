@@ -17,7 +17,7 @@ export const singlePageLoader = async ({ params }: LoaderFunctionArgs) => {
       ...data.postdetail,
       school: formatDistance(postDetail.school),
       bus: formatDistance(postDetail.bus),
-      restaurant: formatDistance(postDetail.restaurant)
+      restaurant: formatDistance(postDetail.restaurant),
     },
   };
 
@@ -26,8 +26,7 @@ export const singlePageLoader = async ({ params }: LoaderFunctionArgs) => {
 
 export const listPageLoader = async ({ request }: LoaderFunctionArgs) => {
   let query = request.url.split("?")[1];
-  if (!query)
-    query = `city=&type=&property=&bedroom=&minPrice=&maxPrice=`
+  if (!query) query = `city=&type=&property=&bedroom=&minPrice=&maxPrice=`;
   const res = axios.get(`/api/post?${query}`);
 
   return defer({

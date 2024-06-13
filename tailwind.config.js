@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import typography from "@tailwindcss/typography";
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,tsx}"],
   mode: "jit",
@@ -86,4 +88,8 @@ export default {
       xl: "1366px",
     },
   },
+  plugins: [
+    typography,
+    // ...
+  ],
 };

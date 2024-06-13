@@ -6,12 +6,13 @@ export default function HomePage() {
     <div className="homePage font-poppins">
       <div className="textContainer">
         <div className="wrapper flex h-full flex-col justify-center gap-3 sm:gap-10">
-          <h1 className=" text-3xl font-semibold md:text-5xl font-chillax">
+          <h1 className=" font-chillax text-3xl font-semibold md:text-5xl">
             Seamless Property Search: Find Your Ideal Home in Minutes
           </h1>
 
           <p className="font-light">
-            Access thousands of listings,Effortless Exploration and Discover the Perfect Property with Ease all in one place.
+            Access thousands of listings,Effortless Exploration and Discover the
+            Perfect Property with Ease all in one place.
           </p>
 
           <Searchbar />

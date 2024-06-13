@@ -1,12 +1,7 @@
 import "../../styles/ui/card.scss";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MapIcon } from "@heroicons/react/24/outline";
-import {
-  Estate,
-  EstateRaw,
-  UserType,
-  toastMessage,
-} from "../../lib";
+import { Estate, EstateRaw, UserType, toastMessage } from "../../lib";
 import axios, { AxiosError } from "axios";
 import { useContext, useState } from "react";
 import clsx from "clsx";
@@ -44,8 +39,6 @@ export default function Card({
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(currUser?._id)
-  console.log(item.user);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -56,7 +49,6 @@ export default function Card({
       setIsSaved((prev) => !prev);
       if (location.pathname === "/profile") navigate(0);
     } catch (error) {
-
       if (error instanceof AxiosError) {
         toastMessage("error", error.response?.data.message, 4000);
       } else toastMessage("error", "error occured. Try again", 4000);
@@ -69,28 +61,36 @@ export default function Card({
     setIsLoading(true);
     if (!currUser) navigate("/login");
     try {
-      const res = await axios.post("/api/chat/addchat", { recieverId: typeof (item.user) === 'string' ? item.user : item.user._id, postId: item._id });
-      // toastMessage("success", res.data.message, 4000);
-      console.log(res.data);
+      await axios.post("/api/chat/addchat", {
+        recieverId: typeof item.user === "string" ? item.user : item.user._id,
+        postId: item._id,
+      });
       setChatOpen(true);
     } catch (error) {
-
       if (error instanceof AxiosError) {
         toastMessage("error", error.response?.data.message, 4000);
-      } else toastMessage("error", "Unable to open chat. Please refresh the page and try again.", 4000);
+      } else
+        toastMessage(
+          "error",
+          "Unable to open chat. Please refresh the page and try again.",
+          4000,
+        );
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="card relative flex w-full flex-col rounded-2xl p-2 md:flex-row border-[1px] bg-transparent">
+    <div className="card relative flex w-full flex-col rounded-2xl border-[1px] bg-transparent p-2 md:flex-row">
       <Link to={`/estate/${item._id}`} className="imgContainer h-[250px]">
         <img src={item.images[0]} alt={item.title} />
       </Link>
 
-      {item.city &&
-        <span className="absolute -top-[1px] -right-[1px] rounded-bl-lg text-sm px-2 py-1 text-gray-50 bg-zinc-950 rounded-tr-2xl">{item.city}</span>}
+      {item.city && (
+        <span className="absolute -right-[1px] -top-[1px] rounded-bl-lg rounded-tr-2xl bg-zinc-950 px-2 py-1 text-sm text-gray-50">
+          {item.city}
+        </span>
+      )}
 
       <div className="textContainer flex flex-col gap-3 md:justify-between">
         <h2 className="cardTitle">
@@ -98,27 +98,30 @@ export default function Card({
         </h2>
 
         <p className="address">
-          <MapIcon className="w-5 h-5 shrink-0" />
+          <MapIcon className="h-5 w-5 shrink-0" />
           <span>{truncateText(item.address, 100)}</span>
         </p>
 
-        <div className="flex items-center justify-between w-full">
-          <span className="price font-chillax">₹ {formatPrice(item.price)}</span>
+        <div className="flex w-full items-center justify-between">
+          <span className="price font-chillax">
+            ₹ {formatPrice(item.price)}
+          </span>
 
           <div className=" flex gap-3">
-            <span className="rounded-md px-3 py-1 bg-slate-100 text-gray-500">{item.property}</span>
+            <span className="rounded-md bg-slate-100 px-3 py-1 text-gray-500">
+              {item.property}
+            </span>
 
-            <span className={clsx(
-              "rounded-md px-3 py-1",
-              {
-                'bg-pink-100 text-pink-400': item.type === "buy",
-                'bg-indigo-100 text-indigo-400': item.type === "rent",
-              }
-            )}>{item.type}</span>
+            <span
+              className={clsx("rounded-md px-3 py-1", {
+                "bg-pink-100 text-pink-400": item.type === "buy",
+                "bg-indigo-100 text-indigo-400": item.type === "rent",
+              })}
+            >
+              {item.type}
+            </span>
           </div>
-
         </div>
-
 
         <div className="bottom flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="features">
@@ -139,11 +142,14 @@ export default function Card({
             </div>
           </div>
 
-          <div className={clsx("icons gap-3", {
-            "gap-0": btnDisabled,
-            "hidden": currUser && currUser._id === item.user,
-            "flex items-center": (currUser && currUser._id !== item.user) || !currUser,
-          })}>
+          <div
+            className={clsx("icons gap-3", {
+              "gap-0": btnDisabled,
+              hidden: currUser && currUser._id === item.user,
+              "flex items-center":
+                (currUser && currUser._id !== item.user) || !currUser,
+            })}
+          >
             <div className="relative flex items-center justify-center">
               {isLoading && (
                 <span className="absolute z-20 animate-spin text-zinc-800">
@@ -163,7 +169,12 @@ export default function Card({
               />
             </div>
 
-            <img onClick={handleChat} className={clsx(`icon`, { 'hidden': btnDisabled })} src="/assets/icons/chat.png" alt="chat" />
+            <img
+              onClick={handleChat}
+              className={clsx(`icon`, { hidden: btnDisabled })}
+              src="/assets/icons/chat.png"
+              alt="chat"
+            />
           </div>
         </div>
       </div>

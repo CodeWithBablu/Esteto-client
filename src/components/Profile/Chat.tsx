@@ -20,7 +20,7 @@ export default function Chat({
   isOpen,
   currUser,
   isMessageOpen,
-  setMessageOpen
+  setMessageOpen,
 }: {
   isOpen: boolean;
   currUser: UserType | null;
@@ -44,10 +44,9 @@ export default function Chat({
   useEffect(() => {
     if (socket) {
       socket.on("getMessage", () => {
-
         if (!isMessageOpen) {
           fetch();
-          fetchChats()
+          fetchChats();
         }
       });
     }
@@ -102,7 +101,7 @@ export default function Chat({
   return (
     <div
       className={clsx(
-        "absolute z-50 left-0 top-[70px] flex h-[calc(100dvh-70px)] w-full max-w-[600px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:h-[calc(100dvh-80px)] sm:rounded-2xl",
+        "absolute left-0 top-[70px] z-50 flex h-[calc(100dvh-70px)] w-full max-w-[600px] overflow-hidden bg-zinc-950/90 font-poppins backdrop-blur-2xl transition-all duration-200 ease-in-out sm:left-auto sm:right-10 sm:h-[calc(100dvh-80px)] sm:rounded-2xl",
         {
           "translate-x-0": isOpen,
           "translate-x-[calc(100%+2.5rem)]": !isOpen,
@@ -114,7 +113,7 @@ export default function Chat({
           {/* //// contactContainer started */}
           <div
             className={clsx(
-              "contactContainer z-40 sticky top-0 h-full w-full shrink-0 transition-all duration-500 ease-linear",
+              "contactContainer sticky top-0 z-40 h-full w-full shrink-0 transition-all duration-500 ease-linear",
               { "blur-sm": isMessageOpen },
             )}
           >
@@ -169,7 +168,7 @@ export default function Chat({
                 },
               )}
             >
-              {(chats && chats.length > 0) ? (
+              {chats && chats.length > 0 ? (
                 <>
                   {chats.map((chat, index) => {
                     const receiver = chat.participants.filter(
@@ -177,7 +176,8 @@ export default function Chat({
                     )[0] as UserType;
                     return (
                       <div key={index}>
-                        <Tooltip className="font-poppins rounded-lg border-2 py-2 px-2 border-orange-600/50 shadow-lg shadow-orange-500/20 stroke-orange-500 fill-orange-500"
+                        <Tooltip
+                          className="rounded-lg border-2 border-orange-600/50 fill-orange-500 stroke-orange-500 px-2 py-2 font-poppins shadow-lg shadow-orange-500/20"
                           content={
                             <div className="flex items-center gap-3">
                               {receiver.avatar ? (
@@ -203,11 +203,16 @@ export default function Chat({
                               )}
 
                               <div className="flex flex-col gap-1">
-                                <span className=" font-poppins text-sm">{receiver.username}</span>
-                                <span className=" font-poppins text-sm text-indigo-300">{receiver.email}</span>
+                                <span className=" font-poppins text-sm">
+                                  {receiver.username}
+                                </span>
+                                <span className=" font-poppins text-sm text-indigo-300">
+                                  {receiver.email}
+                                </span>
                               </div>
                             </div>
-                          }>
+                          }
+                        >
                           <div
                             onClick={() =>
                               handleClick(
@@ -247,7 +252,7 @@ export default function Chat({
                               <h2 className="font-chillax text-[16px] font-medium text-gray-50 sm:text-[18px]">
                                 {chat.post.title}
                               </h2>
-                              <div className="flex justify-between w-full">
+                              <div className="flex w-full justify-between">
                                 <span
                                   className={clsx(
                                     "font-chillax text-[14px] font-medium sm:text-[16px]",
@@ -261,12 +266,17 @@ export default function Chat({
                                     },
                                   )}
                                 >
-                                  {chat.latestMessage && truncateText(chat.latestMessage, 20)}
+                                  {chat.latestMessage &&
+                                    truncateText(chat.latestMessage, 20)}
                                   {!chat.latestMessage && "Hey! I am on esteto"}
                                 </span>
 
-                                <span className="text-orange-100 text-sm font-chillax">
-                                  {chat.post.address.split(',')[0] && truncateText(chat.post.address.split(',')[0], 20)}
+                                <span className="font-chillax text-sm text-orange-100">
+                                  {chat.post.address.split(",")[0] &&
+                                    truncateText(
+                                      chat.post.address.split(",")[0],
+                                      20,
+                                    )}
                                   {chat.post.city}
                                 </span>
                               </div>
@@ -274,7 +284,7 @@ export default function Chat({
 
                             <span
                               className={clsx(
-                                "absolute top-4 right-2 h-2 w-2 animate-pulse rounded-full bg-pink-500 ease-in",
+                                "absolute right-2 top-4 h-2 w-2 animate-pulse rounded-full bg-pink-500 ease-in",
                                 {
                                   "inline-block":
                                     !chat.seenBy.includes(currUser._id) &&
@@ -292,9 +302,15 @@ export default function Chat({
                   })}
                 </>
               ) : (
-                <div className="text-center flex flex-col h-full items-center justify-center gap-5 text-gray-400">
-                  <span className="text-lg">Chat room's on vacation, empty vibes!!</span>
-                  <img src="/assets/icons/notification.png" className="w-[50%] h-[50%] object-contain" alt="chat" />
+                <div className="flex h-full flex-col items-center justify-center gap-5 text-center text-gray-400">
+                  <span className="text-lg">
+                    Chat room's on vacation, empty vibes!!
+                  </span>
+                  <img
+                    src="/assets/icons/notification.png"
+                    className="h-[50%] w-[50%] object-contain"
+                    alt="chat"
+                  />
                 </div>
               )}
             </div>

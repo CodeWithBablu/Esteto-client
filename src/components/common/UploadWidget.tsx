@@ -69,7 +69,7 @@ function UploadWidget({
   return (
     <button
       id="upload_widget"
-      className={`mt-5 rounded-md z-20 bg-indigo-600 px-6 py-2 font-poppins font-medium text-gray-100 
+      className={`z-20 mt-5 rounded-md bg-indigo-600 px-6 py-2 font-poppins font-medium text-gray-100 
         ${loaded ? "opacity-100" : "pointer-events-none opacity-50"}`}
       disabled={!loaded}
       onClick={handleClick}

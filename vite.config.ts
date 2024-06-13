@@ -3,19 +3,19 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), "");
   console.log(env.VITE_BACKEND_URL);
   return {
     // dev specific config
-    base: '/',
+    base: "/",
     server: {
       host: "0.0.0.0",
       proxy: {
-        '/api': {
+        "/api": {
           target: env.VITE_BACKEND_URL,
           changeOrigin: true,
           secure: false,
-        }
+        },
       },
     },
     resolve: {
@@ -24,9 +24,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [react()],
-  }
+  };
 });
-
 
 // // https://vitejs.dev/config/
 // export default defineConfig({

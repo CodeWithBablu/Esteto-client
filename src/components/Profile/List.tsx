@@ -9,7 +9,7 @@ export default function List({
   btnDisabled: boolean;
 }) {
   return (
-    <div className="list flex flex-col items-center gap-10 mb-10">
+    <div className="list mb-10 flex flex-col items-center gap-10">
       {listData.map((item) => (
         <Card key={item._id} item={item} btnDisabled={btnDisabled} />
       ))}

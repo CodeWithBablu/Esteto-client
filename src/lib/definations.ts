@@ -85,11 +85,11 @@ export interface MessageType {
 }
 
 export interface City {
-  "city": string,
-  "coordinates": {
-    "lon": number,
-    "lat": number
-  }
+  city: string;
+  coordinates: {
+    lon: number;
+    lat: number;
+  };
 }
 
 export interface Address {
@@ -138,7 +138,6 @@ interface Coordinates {
   longitude: number;
   latitude: number;
 }
-
 
 interface Context {
   street?: Record<string, string>;
